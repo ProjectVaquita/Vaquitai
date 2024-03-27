@@ -86,6 +86,8 @@ class ImageCaptionGenerator(Generator):
 
         # 1. load image(s)
         image = load_image(sample[self.image_key])
+        if image.size[0] < 2 or image.size[1] < 2:
+            image = image.resize((224,224))
         inputs = self.img_processor(images=image, return_tensors="pt").to(self.device)
         outputs = self.model.generate(**inputs)
         image_caption_text = self.img_processor.decode(outputs[0], skip_special_tokens=True)
