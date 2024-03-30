@@ -29,6 +29,15 @@ from data_juicer.platform.src.utils.st_components import get_remote_ip
 import random
 
 
+issue_dict = {'重复': '__dj__is_image_duplicated_issue',
+                '低信息': '__dj__is_low_information_issue',                 
+                '特殊大小': '__dj__is_odd_size_issue', 
+                '特殊尺寸': '__dj__is_odd_aspect_ratio_issue',
+                '极亮': '__dj__is_light_issue',
+                '灰度': '__dj__is_grayscale_issue', 
+                '极暗': '__dj__is_dark_issue', 
+                '模糊': '__dj__is_blurry_issue'}
+
 @st.cache_resource
 def load_model():
     model_key = prepare_model(model_type='hf_blip', model_key='Salesforce/blip-itm-base-coco')
@@ -93,13 +102,23 @@ def plot_image_clusters(dataset):
     __dj__image_embedding_2d = np.array(dataset['__dj__image_embedding_2d'])
     df = pd.DataFrame(__dj__image_embedding_2d, columns=['x', 'y'])
     df['image'] = dataset['image']
+    df['image_path'] = dataset['image']
     df['description'] = dataset['__dj__image_caption']
+    retained_flag = np.full((len(dataset['image']), ), True, dtype=bool)
+    for key, issue in issue_dict.items():
+        if issue not in dataset.features:
+            continue
+        retained_flag = retained_flag & ~np.array(dataset[issue])
+    df['category'] = ['retained' if flag else 'discarded' for flag in retained_flag]
+    color_scale = alt.Scale(domain=['retained', 'discarded'],
+                            range=['green', 'red'])
 
     marker_chart = alt.Chart(df).mark_circle().encode(
         x=alt.X('x', scale=alt.Scale(type='linear', domain=[df['x'].min() * 0.95, df['x'].max() * 1.05]), axis=alt.Axis(title='X-axis')),
         y=alt.Y('y', scale=alt.Scale(type='linear', domain=[df['y'].min() * 0.95, df['y'].max() * 1.05]), axis=alt.Axis(title='Y-axis')),
         href=('image:N'), 
-        tooltip=['image', 'description']
+        tooltip=['image', 'image_path', 'description'],
+        color=alt.Color('category', scale=color_scale),
     ).properties(
         width=800,
         height=600,
@@ -126,6 +145,16 @@ def write():
     # TODO: Automatically find data source
     # data_source = {'BDD100K-train': 'train', 'BDD100K-val': 'val', 'BDD100K-test': 'test'}
     data_source = {'train': 'train'}
+    data_source = {'train': 'train'}
+    issue_dict = {'重复': '__dj__is_image_duplicated_issue',
+                '低信息': '__dj__is_low_information_issue',                 
+                '特殊大小': '__dj__is_odd_size_issue', 
+                '特殊尺寸': '__dj__is_odd_aspect_ratio_issue',
+                '极亮': '__dj__is_light_issue',
+                '灰度': '__dj__is_grayscale_issue', 
+                '极暗': '__dj__is_dark_issue', 
+                '模糊': '__dj__is_blurry_issue'}
+    data_source = {'train': 'train'} 
     issue_dict = {'重复': '__dj__is_image_duplicated_issue',
                 '低信息': '__dj__is_low_information_issue',                 
                 '特殊大小': '__dj__is_odd_size_issue', 
