@@ -112,6 +112,9 @@ def plot_image_clusters(dataset):
     df['category'] = ['retained' if flag else 'discarded' for flag in retained_flag]
     color_scale = alt.Scale(domain=['retained', 'discarded'],
                             range=['green', 'red'])
+    brush = alt.selection_interval(encodings=['x', 'y'],
+                               bind='scales'
+                              )
 
     marker_chart = alt.Chart(df).mark_circle().encode(
         x=alt.X('x', scale=alt.Scale(type='linear', domain=[df['x'].min() * 0.95, df['x'].max() * 1.05]), axis=alt.Axis(title='X-axis')),
@@ -124,7 +127,7 @@ def plot_image_clusters(dataset):
         height=600,
     ).configure_legend(
         disable=False
-    )
+    ).add_params(brush).properties(width=800, height=600)
     return marker_chart
 
 def write():
