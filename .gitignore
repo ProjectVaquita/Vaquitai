@@ -15,3 +15,5 @@ dist
 .idea/
 wandb/
 __pycache__
+
+.vscode/

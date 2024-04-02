@@ -1,6 +1,6 @@
-{"text": "haha", "images": ["cifar10_cl/blur1.jpg"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/blur2.jpg"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/low0.png"], "annotations": ["low"]}
+{"text": "haha", "images": ["cifar10_cl/blur1.jpg", "cifar10_cl/blur2.jpg"], "annotations": ["blur"]}
+{"text": "haha", "images": ["cifar10_cl/blur2.jpg", "cifar10_cl/low0.png", "cifar10_cl/low0.png"], "annotations": ["blur"]}
+{"text": "haha", "images": ["cifar10_cl/low0.png", "cifar10_cl/low1.png", "cifar10_cl/station_wagon_s_000293.png"], "annotations": ["low"]}
 {"text": "haha", "images": ["cifar10_cl/low1.png"], "annotations": ["low"]}
 {"text": "haha", "images": ["cifar10_cl/dark1.jpg"], "annotations": ["dark"]}
 {"text": "haha", "images": ["cifar10_cl/dark2.jpg"], "annotations": ["dark"]}
@@ -13,7 +13,7 @@
 {"text": "haha", "images": ["cifar10_cl/tipper_truck_s_001250.png"], "annotations": ["truck"]}
 {"text": "haha", "images": ["cifar10_cl/american_elk_s_001521.png"], "annotations": ["deer"]}
 {"text": "haha", "images": ["cifar10_cl/station_wagon_s_000293.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/coupe_s_001735.png"], "annotations": ["automobile"]}
+{"text": "haha", "images": ["cifar10_cl/coupe_s_001735.png", "cifar10_cl/low1.png"], "annotations": ["automobile"]}
 {"text": "haha", "images": ["cifar10_cl/cassowary_s_001300.png"], "annotations": ["bird"]}
 {"text": "haha", "images": ["cifar10_cl/cow_pony_s_001168.png"], "annotations": ["horse"]}
 {"text": "haha", "images": ["cifar10_cl/sea_boat_s_001584.png"], "annotations": ["ship"]}
