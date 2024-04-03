@@ -148,24 +148,6 @@ def write():
     # TODO: Automatically find data source
     # data_source = {'BDD100K-train': 'train', 'BDD100K-val': 'val', 'BDD100K-test': 'test'}
     data_source = {'train': 'train'}
-    data_source = {'train': 'train'}
-    issue_dict = {'重复': '__dj__is_image_duplicated_issue',
-                '低信息': '__dj__is_low_information_issue',                 
-                '特殊大小': '__dj__is_odd_size_issue', 
-                '特殊尺寸': '__dj__is_odd_aspect_ratio_issue',
-                '极亮': '__dj__is_light_issue',
-                '灰度': '__dj__is_grayscale_issue', 
-                '极暗': '__dj__is_dark_issue', 
-                '模糊': '__dj__is_blurry_issue'}
-    data_source = {'train': 'train'} 
-    issue_dict = {'重复': '__dj__is_image_duplicated_issue',
-                '低信息': '__dj__is_low_information_issue',                 
-                '特殊大小': '__dj__is_odd_size_issue', 
-                '特殊尺寸': '__dj__is_odd_aspect_ratio_issue',
-                '极亮': '__dj__is_light_issue',
-                '灰度': '__dj__is_grayscale_issue', 
-                '极暗': '__dj__is_dark_issue', 
-                '模糊': '__dj__is_blurry_issue'}
     
     def find_key_by_value(dictionary, target_value):
         print(dictionary, target_value)
@@ -176,7 +158,10 @@ def write():
 
     if chosen_id == 'data_show':
         logger.info(f"enter data_show page, user_name: {st.session_state['name']}, ip: {get_remote_ip()}")
-        df = processed_dataset.flatten().to_pandas()
+        if '__dj__image_embedding' in processed_dataset.features:
+            df = processed_dataset.remove_columns(['__dj__image_embedding']).flatten().to_pandas()
+        else:
+            df = processed_dataset.flatten().to_pandas()
         st.dataframe(df)
         
 
