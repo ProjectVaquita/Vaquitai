@@ -11,15 +11,16 @@
 
 ```shell
 # 使用 Anaconda【推荐】
+git clone https://github.com/ProjectVaquitai/Vaquitai.git
+cd Vaquitai
 conda create --name vaquitai python==3.8
 conda activate vaquitai
-cd <path_to_vaquitai>
 pip install -v -e .[all]
 ```
 
 ```shell
 # 不使用 Anaconda
-cd <path_to_vaquitai>
+cd Vaquitai
 pip install -v -e .[all]
 ```
 
