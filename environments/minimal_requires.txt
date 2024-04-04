@@ -27,6 +27,7 @@ opencv-python
 umap-learn
 sweetviz
 faiss_cpu
+huggingface_hub
 streamlit==1.30.0
 streamlit_option_menu==0.3.6
 streamlit_authenticator==0.3.1

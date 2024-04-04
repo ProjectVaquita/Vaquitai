@@ -70,7 +70,16 @@ class FeatureReduceGenerator(Generator):
         """
         # no need to deduplicate because too few samples
         image_embeddings = dataset[EmbKeys.image_embedding]
-        image_embeddings = np.array(image_embeddings)
-        embeddings_2d = self.model.fit_transform(image_embeddings).tolist()
+
+        image_embeddings_flat = [emb for sublist in image_embeddings for emb in sublist]
+        image_embeddings_flat = np.array(image_embeddings_flat)
+        embeddings_2d_flat = self.model.fit_transform(image_embeddings_flat).tolist()
+        
+        embeddings_2d = []
+        cnt = 0
+        for idx, emb in enumerate(image_embeddings):
+            length = len(emb)
+            embeddings_2d.append(embeddings_2d_flat[cnt:cnt+length])
+            cnt += length
         dataset = dataset.add_column(name=EmbKeys.image_embedding_2d, column=embeddings_2d)
         return dataset

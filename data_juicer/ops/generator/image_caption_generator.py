@@ -36,7 +36,7 @@ class ImageCaptionGenerator(Generator):
     another model and the figure."""
 
     def __init__(self,
-                 hf_blip2='Salesforce/blip-image-captioning-base',
+                 hf_blip='Salesforce/blip-image-captioning-base',
                  caption_num: PositiveInt = 1,
                  keep_candidate_mode: str = 'random_any',
                  *args,
@@ -64,17 +64,15 @@ class ImageCaptionGenerator(Generator):
                 f'Keep strategy [{keep_candidate_mode}] is not supported. '
                 f'Can only be one of '
                 f'["random_any", "similar_one_simhash", "all"].')
-        self.model_key = prepare_model(model_type='hf_blip',
-                                       model_key=hf_blip2,
-                                       usage='image_caption')
+        self.model_key = prepare_model(model_type='huggingface',
+                                        pretrained_model_name_or_path=hf_blip)
         self.device  = "cuda" if torch.cuda.is_available() else "cpu"
         self.model_in_ctx = None
         self.img_processor_in_ctx = None
         self.caption_num = caption_num
         self.keep_candidate_mode = keep_candidate_mode
         self.extra_args = kwargs
-        self.model, self.img_processor = get_model(model_key=self.model_key,
-                                             usage='image_caption')
+        self.model, self.img_processor = get_model(model_key=self.model_key)
         self.model = self.model.to(self.device)
 
     def caption(self, sample, context=True):
@@ -84,14 +82,20 @@ class ImageCaptionGenerator(Generator):
                 [], dtype=np.float64)
             return sample
 
+        sample[GenKeys.image_caption] = []
+        loaded_image_keys = sample[self.image_key]
+        if not isinstance(loaded_image_keys, list):
+            loaded_image_keys = [loaded_image_keys]
+
         # 1. load image(s)
-        image = load_image(sample[self.image_key])
-        if image.size[0] < 2 or image.size[1] < 2:
-            image = image.resize((224,224))
-        inputs = self.img_processor(images=image, return_tensors="pt").to(self.device)
-        outputs = self.model.generate(**inputs)
-        image_caption_text = self.img_processor.decode(outputs[0], skip_special_tokens=True)
-        sample[GenKeys.image_caption] = image_caption_text
+        for image_key in loaded_image_keys:
+            image = load_image(image_key)
+            if image.size[0] < 2 or image.size[1] < 2:
+                image = image.resize((224,224))
+            inputs = self.img_processor(images=image, return_tensors="pt").to(self.device)
+            outputs = self.model.generate(**inputs)
+            image_caption_text = self.img_processor.decode(outputs[0], skip_special_tokens=True)
+            sample[GenKeys.image_caption].append(image_caption_text)
 
         return sample
 

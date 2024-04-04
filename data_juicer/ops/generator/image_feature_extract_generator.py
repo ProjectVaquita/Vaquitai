@@ -37,7 +37,7 @@ class ImageFeatureExtractGenerator(Generator):
         """
         super().__init__(*args, **kwargs)
         self.device  = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model_key = prepare_model(model_type='hf_blip', model_key=hf_blip)
+        self.model_key = prepare_model(model_type='huggingface', pretrained_model_name_or_path=hf_blip)
         self.model, self.processor = get_model(self.model_key)
         self.model = self.model.to(self.device)
         self.transform = transforms.Compose([
@@ -56,14 +56,18 @@ class ImageFeatureExtractGenerator(Generator):
             return sample
 
         # load images
-        image = load_image(sample[self.image_key])
-        image = self.transform(image).unsqueeze(0).to(self.device)
+        loaded_image_keys = sample[self.image_key]
+        if not isinstance(loaded_image_keys, list):
+            loaded_image_keys = [loaded_image_keys]
+        
+        for image_key in loaded_image_keys:
+            image = load_image(image_key)
+            image = self.transform(image).unsqueeze(0).to(self.device)
 
-
-        # compute image embeddings
-        image_embeds = self.model.vision_model(image)[0] 
-        image_feature = F.normalize(self.model.vision_proj(image_embeds[:,0,:]),dim=-1).half()
-        sample[EmbKeys.image_embedding] = image_feature.cpu().tolist()[0]
+            # compute image embeddings
+            image_embeds = self.model.vision_model(image)[0] 
+            image_feature = F.normalize(self.model.vision_proj(image_embeds[:,0,:]),dim=-1).half()
+            sample[EmbKeys.image_embedding].append(image_feature.cpu().tolist()[0])
 
         return sample
 
@@ -79,6 +83,5 @@ class ImageFeatureExtractGenerator(Generator):
         # no need to deduplicate because too few samples
         dataset = dataset.map(self.compute_embedding,
                               desc= 'image_feature_extract_process')
-        
 
         return dataset

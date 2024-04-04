@@ -388,13 +388,21 @@ def prepare_huggingface_model(pretrained_model_name_or_path,
     """
     import transformers
     from transformers import AutoConfig, AutoProcessor
+    import os
 
-    processor = AutoProcessor.from_pretrained(
-        pretrained_model_name_or_path, trust_remote_code=trust_remote_code)
+    model_path = os.path.join(os.path.expanduser('~'), '.cache/huggingface/hub', 'models--' + pretrained_model_name_or_path.replace('/', '--'))
+    try:
+        processor = AutoProcessor.from_pretrained(
+            model_path, trust_remote_code=trust_remote_code)
+    except:        
+        os.system(f'export HF_ENDPOINT=https://hf-mirror.com && huggingface-cli download --resume-download {pretrained_model_name_or_path} --local-dir {model_path}')   
+        processor = AutoProcessor.from_pretrained(
+            model_path, trust_remote_code=trust_remote_code)
+
 
     if return_model:
         config = AutoConfig.from_pretrained(
-            pretrained_model_name_or_path, trust_remote_code=trust_remote_code)
+            model_path, trust_remote_code=trust_remote_code)
         if hasattr(config, 'auto_map'):
             class_name = next(
                 (k for k in config.auto_map if k.startswith('AutoModel')),
@@ -405,7 +413,7 @@ def prepare_huggingface_model(pretrained_model_name_or_path,
 
         model_class = getattr(transformers, class_name)
         model = model_class.from_pretrained(
-            pretrained_model_name_or_path, trust_remote_code=trust_remote_code)
+            model_path, trust_remote_code=trust_remote_code)
 
     return (model, processor) if return_model else processor
 
