@@ -1,122 +1,122 @@
-{"text": "haha", "images": ["cifar10_cl/blur1.jpg", "cifar10_cl/blur2.jpg"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/blur2.jpg", "cifar10_cl/low0.png", "cifar10_cl/low0.png"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/low0.png", "cifar10_cl/low1.png", "cifar10_cl/station_wagon_s_000293.png"], "annotations": ["low"]}
-{"text": "haha", "images": ["cifar10_cl/low1.png"], "annotations": ["low"]}
-{"text": "haha", "images": ["cifar10_cl/dark1.jpg"], "annotations": ["dark"]}
-{"text": "haha", "images": ["cifar10_cl/dark2.jpg"], "annotations": ["dark"]}
-{"text": "haha", "images": ["cifar10_cl/bright1.jpg"], "annotations": ["bright"]}
-{"text": "haha", "images": ["cifar10_cl/bright2.jpg"], "annotations": ["bright"]}
-{"text": "haha", "images": ["cifar10_cl/low0.png"], "annotations": ["low"]}
-{"text": "haha", "images": ["cifar10_cl/low1.png"], "annotations": ["low"]}
-{"text": "haha", "images": ["cifar10_cl/leptodactylus_pentadactylus_s_000004.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/camion_s_000148.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/tipper_truck_s_001250.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/american_elk_s_001521.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/station_wagon_s_000293.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/coupe_s_001735.png", "cifar10_cl/low1.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/cassowary_s_001300.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/cow_pony_s_001168.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/sea_boat_s_001584.png"], "annotations": ["ship"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_s_001355.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/muntjac_s_001000.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/arabian_s_001354.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/quarter_horse_s_000672.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/passerine_s_000343.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/camion_s_001895.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/trailer_truck_s_000335.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/dumper_s_000821.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/alley_cat_s_000200.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/accentor_s_000677.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/frog_s_001671.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/capreolus_capreolus_s_000051.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/tomcat_s_000772.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/pickerel_frog_s_000446.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/bufo_s_001242.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/cassowary_s_001246.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/toad_s_001748.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/cat_s_000081.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/chihuahua_s_000825.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/alces_alces_s_000959.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/stealth_bomber_s_000554.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/twinjet_s_000663.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/trucking_rig_s_001402.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/auto_s_000609.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_cat_s_000983.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_cat_s_000983-1.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_cat_s_000983-2.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_cat_s_000983-3.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_cat_s_000983-4.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/wapiti_s_000416.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/monoplane_s_000895.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/true_cat_s_000247.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/tennessee_walker_s_000486.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/house_cat_s_000243.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/house_cat_s_001196.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/pekinese_s_001337.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/ostrich_s_001368.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/ostrich_s_001150.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/stallion_s_000046.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/station_waggon_s_000041.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/coupe_s_001944.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/estate_car_s_000580.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/accentor_s_000759.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/emu_novaehollandiae_s_000795.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/dive_bomber_s_001390.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/articulated_lorry_s_000131.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/pekinese_s_001093.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/broodmare_s_001463.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/delivery_truck_s_000834.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/songbird_s_001052.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/emu_s_000692.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/puppy_s_000115.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/wagtail_s_001821.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/dama_dama_s_000658.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/domestic_cat_s_001970.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/ambulance_s_003039.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/convertible_s_001763.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/tank_ship_s_001229.png"], "annotations": ["ship"]}
-{"text": "haha", "images": ["cifar10_cl/cassowary_s_001055.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/cassowary_s_001055-1.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/wagon_s_001142.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/police_cruiser_s_000620.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/moose_s_002308.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/aerial_ladder_truck_s_000584.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/saddle_horse_s_000717.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/tanker_s_001350.png"], "annotations": ["ship"]}
-{"text": "haha", "images": ["cifar10_cl/mongrel_s_001571.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/truck_s_000835.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/pickerel_frog_s_001195.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/lipizzan_s_000399.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_s_000074.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/automobile_s_001887.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/moving_van_s_001665.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/attack_aircraft_s_000153.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/domestic_cat_s_001596.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/compact_car_s_000048.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/domestic_cat_s_000009.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/pekingese_s_002089.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/capreolus_capreolus_s_001095.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/blenheim_spaniel_s_001103.png"], "annotations": ["dog"]}
-{"text": "haha", "images": ["cifar10_cl/stallion_s_000040.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/stud_mare_s_001672.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/elk_s_000920.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/lipizzan_s_001123.png"], "annotations": ["horse"]}
-{"text": "haha", "images": ["cifar10_cl/fire_truck_s_002721.png"], "annotations": ["truck"]}
-{"text": "haha", "images": ["cifar10_cl/elk_s_001888.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/finch_s_000750.png"], "annotations": ["bird"]}
-{"text": "haha", "images": ["cifar10_cl/tabby_s_000880.png"], "annotations": ["cat"]}
-{"text": "haha", "images": ["cifar10_cl/banana_boat_s_001324.png"], "annotations": ["ship"]}
-{"text": "haha", "images": ["cifar10_cl/twinjet_s_000591.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/twinjet_s_000591-1.png"], "annotations": ["airplane"]}
-{"text": "haha", "images": ["cifar10_cl/shooting_brake_s_000029.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/rana_pipiens_s_000101.png"], "annotations": ["frog"]}
-{"text": "haha", "images": ["cifar10_cl/station_wagon_s_001387.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/station_wagon_s_001387-1.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/station_wagon_s_002712.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/station_wagon_s_002712-1.png"], "annotations": ["automobile"]}
-{"text": "haha", "images": ["cifar10_cl/odocoileus_hemionus_s_000221.png"], "annotations": ["deer"]}
-{"text": "haha", "images": ["cifar10_cl/wrecker_s_002395.png"], "annotations": ["wrecker"]}
-{"text": "haha", "images": ["cifar10_cl/wrecker_s_002395-2.png"], "annotations": ["wrecker"]}
-{"text": "haha", "images": ["cifar10_cl/wrecker_s_002395-3.png"], "annotations": ["wrecker"]}
-{"text": "haha", "images": ["cifar10_cl/wrecker_s_002395-2222.png"], "annotations": ["wrecker"]}
+{"images": ["cifar10_cl/blur1.jpg", "cifar10_cl/blur2.jpg"], "text": "<__dj__image>blur"}
+{"images": ["cifar10_cl/blur2.jpg", "cifar10_cl/low0.png", "cifar10_cl/low0.png"], "text": "<__dj__image>blur"}
+{"images": ["cifar10_cl/low0.png", "cifar10_cl/low1.png", "cifar10_cl/station_wagon_s_000293.png"], "text": "<__dj__image>low"}
+{"images": ["cifar10_cl/low1.png"], "text": "<__dj__image>low"}
+{"images": ["cifar10_cl/dark1.jpg"], "text": "<__dj__image>dark"}
+{"images": ["cifar10_cl/dark2.jpg"], "text": "<__dj__image>dark"}
+{"images": ["cifar10_cl/bright1.jpg"], "text": "<__dj__image>bright"}
+{"images": ["cifar10_cl/bright2.jpg"], "text": "<__dj__image>bright"}
+{"images": ["cifar10_cl/low0.png"], "text": "<__dj__image>low"}
+{"images": ["cifar10_cl/low1.png"], "text": "<__dj__image>low"}
+{"images": ["cifar10_cl/leptodactylus_pentadactylus_s_000004.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/camion_s_000148.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/tipper_truck_s_001250.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/american_elk_s_001521.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/station_wagon_s_000293.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/coupe_s_001735.png", "cifar10_cl/low1.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/cassowary_s_001300.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/cow_pony_s_001168.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/sea_boat_s_001584.png"], "text": "<__dj__image>ship"}
+{"images": ["cifar10_cl/tabby_s_001355.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/muntjac_s_001000.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/arabian_s_001354.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/quarter_horse_s_000672.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/passerine_s_000343.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/camion_s_001895.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/trailer_truck_s_000335.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/dumper_s_000821.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/alley_cat_s_000200.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/accentor_s_000677.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/frog_s_001671.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/capreolus_capreolus_s_000051.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/tomcat_s_000772.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/pickerel_frog_s_000446.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/bufo_s_001242.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/cassowary_s_001246.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/toad_s_001748.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/cat_s_000081.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/chihuahua_s_000825.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/alces_alces_s_000959.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/stealth_bomber_s_000554.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/twinjet_s_000663.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/trucking_rig_s_001402.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/auto_s_000609.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/tabby_cat_s_000983.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/tabby_cat_s_000983-1.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/tabby_cat_s_000983-2.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/tabby_cat_s_000983-3.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/tabby_cat_s_000983-4.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/wapiti_s_000416.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/monoplane_s_000895.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/true_cat_s_000247.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/tennessee_walker_s_000486.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/house_cat_s_000243.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/house_cat_s_001196.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/pekinese_s_001337.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/ostrich_s_001368.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/ostrich_s_001150.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/stallion_s_000046.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/station_waggon_s_000041.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/coupe_s_001944.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/estate_car_s_000580.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/accentor_s_000759.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/emu_novaehollandiae_s_000795.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/dive_bomber_s_001390.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/articulated_lorry_s_000131.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/pekinese_s_001093.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/broodmare_s_001463.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/delivery_truck_s_000834.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/songbird_s_001052.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/emu_s_000692.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/puppy_s_000115.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/wagtail_s_001821.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/dama_dama_s_000658.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/domestic_cat_s_001970.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/ambulance_s_003039.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/convertible_s_001763.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/tank_ship_s_001229.png"], "text": "<__dj__image>ship"}
+{"images": ["cifar10_cl/cassowary_s_001055.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/cassowary_s_001055-1.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/wagon_s_001142.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/police_cruiser_s_000620.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/moose_s_002308.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/aerial_ladder_truck_s_000584.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/saddle_horse_s_000717.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/tanker_s_001350.png"], "text": "<__dj__image>ship"}
+{"images": ["cifar10_cl/mongrel_s_001571.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/truck_s_000835.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/pickerel_frog_s_001195.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/lipizzan_s_000399.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/tabby_s_000074.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/automobile_s_001887.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/moving_van_s_001665.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/attack_aircraft_s_000153.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/domestic_cat_s_001596.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/compact_car_s_000048.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/domestic_cat_s_000009.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/pekingese_s_002089.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/capreolus_capreolus_s_001095.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/blenheim_spaniel_s_001103.png"], "text": "<__dj__image>dog"}
+{"images": ["cifar10_cl/stallion_s_000040.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/stud_mare_s_001672.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/elk_s_000920.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/lipizzan_s_001123.png"], "text": "<__dj__image>horse"}
+{"images": ["cifar10_cl/fire_truck_s_002721.png"], "text": "<__dj__image>truck"}
+{"images": ["cifar10_cl/elk_s_001888.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/finch_s_000750.png"], "text": "<__dj__image>bird"}
+{"images": ["cifar10_cl/tabby_s_000880.png"], "text": "<__dj__image>cat"}
+{"images": ["cifar10_cl/banana_boat_s_001324.png"], "text": "<__dj__image>ship"}
+{"images": ["cifar10_cl/twinjet_s_000591.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/twinjet_s_000591-1.png"], "text": "<__dj__image>airplane"}
+{"images": ["cifar10_cl/shooting_brake_s_000029.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/rana_pipiens_s_000101.png"], "text": "<__dj__image>frog"}
+{"images": ["cifar10_cl/station_wagon_s_001387.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/station_wagon_s_001387-1.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/station_wagon_s_002712.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/station_wagon_s_002712-1.png"], "text": "<__dj__image>automobile"}
+{"images": ["cifar10_cl/odocoileus_hemionus_s_000221.png"], "text": "<__dj__image>deer"}
+{"images": ["cifar10_cl/wrecker_s_002395.png"], "text": "<__dj__image>wrecker"}
+{"images": ["cifar10_cl/wrecker_s_002395-2.png"], "text": "<__dj__image>wrecker"}
+{"images": ["cifar10_cl/wrecker_s_002395-3.png"], "text": "<__dj__image>wrecker"}
+{"images": ["cifar10_cl/wrecker_s_002395-2222.png"], "text": "<__dj__image>wrecker"}
 

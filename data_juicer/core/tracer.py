@@ -215,8 +215,6 @@ class Tracer:
                 'ori': dup_pairs[key][0],
             })
             for j, item in enumerate(dup_pairs[key][1:]): 
-                print(j, item)
-                print(dup_dict[i])
                 dup_dict[i]['dup%d' % (j + 1)] = item
 
         # export the tracer result.
@@ -226,3 +224,64 @@ class Tracer:
                        orient='records',
                        lines=True,
                        force_ascii=False)
+
+    def trace_mycleanlab(self, op_name: str, previous_ds: Dataset,
+                     processed_ds: Dataset):
+        """
+        Compare datasets before and after a Filter.
+
+        This will mainly show the filtered samples by the Filter
+
+        :param op_name: the op name of filter
+        :param previous_ds: dataset before the filter process
+        :param processed_ds: dataset processed by the filter
+        :return:
+        """
+        if len(previous_ds) == len(processed_ds):
+            logger.warning(f'Datasets before and after op [{op_name}] are all '
+                           f'the same. Thus no comparison results would be '
+                           f'generated.')
+            return
+
+        # get the number of filtered samples.
+        total_dif_num = len(previous_ds) - len(processed_ds)
+        # index of the current sample in the previous dataset
+        i = 0
+        filter_dict = []
+        # number of found filtered samples. It's the offset bewteen two
+        # datasets as well.
+        num = 0
+        while i < len(previous_ds):
+            if i - num >= len(processed_ds) or \
+                    previous_ds[i] != processed_ds[i - num]:
+                # 1. If all samples in processed dataset are checked but there
+                # still some samples left in the previous dataset, all of these
+                # left samples are filtered.
+                # 2. If the corresponding samples in previous and processed
+                # datasets are different, samples in the previous dataset are
+                # filtered.
+                num += 1
+                filter_dict.append(previous_ds[i])
+            if num >= self.show_num or num >= total_dif_num:
+                # If the total number of found filtered samples is enough or we
+                # have found all filtered samples, just stop.
+                break
+            i += 1
+        if len(filter_dict) == 0:
+            logger.warning(f'Datasets before and after op [{op_name}] are all '
+                           f'the same. Thus no comparison results would be '
+                           f'generated.')
+            return
+        elif len(filter_dict) < self.show_num:
+            logger.warning(f'There are {len(filter_dict)} filtered samples '
+                           f'before and after op [{op_name}] -- less than '
+                           f'expected {self.show_num} samples.')
+
+        # export the tracer results.
+        res_name = f'filter-{op_name}.jsonl'
+        filter_df = pd.DataFrame(filter_dict)
+        filter_df.to_json(os.path.join(self.work_dir, res_name),
+                          orient='records',
+                          lines=True,
+                          force_ascii=False)
+        

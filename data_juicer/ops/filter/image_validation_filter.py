@@ -37,28 +37,28 @@ class ImageValidationFilter(Filter):
 
         if self.image_key == "image":
             # there is no image in this sample
-            sample[CleaningKeys.validation] = True
+            sample[Fields.stats][CleaningKeys.validation] = True
             if self.image_key not in sample or not sample[self.image_key]:
                 return sample
 
             # load images
             loaded_image_key = sample[self.image_key]
-            sample[CleaningKeys.validation] = False
+            sample[Fields.stats][CleaningKeys.validation] = False
 
             try:
                 image = load_image(loaded_image_key)
             except:
-                sample[CleaningKeys.validation] = True
+                sample[Fields.stats][CleaningKeys.validation] = True
         
         elif self.image_key == "images":
             # check if it's computed already
             if CleaningKeys.validation in sample:
                 return sample
 
-            sample[CleaningKeys.validation] = []
+            sample[Fields.stats][CleaningKeys.validation] = []
             # there is no image in this sample
             if self.image_key not in sample or not sample[self.image_key]:
-                sample[CleaningKeys.validation] = np.array(
+                sample[Fields.stats][CleaningKeys.validation] = np.array(
                     [], dtype=np.int64)
                 return sample
 
@@ -76,22 +76,22 @@ class ImageValidationFilter(Filter):
                         try:
                             image = load_image(loaded_image_key)
                             images[loaded_image_key] = image
-                            sample[CleaningKeys.validation].append(0)
+                            sample[Fields.stats][CleaningKeys.validation].append(0)
                             if context:
                                 # store the image data into context
                                 sample[Fields.context][loaded_image_key] = image
                         except:
-                            sample[CleaningKeys.validation].append(1)
+                            sample[Fields.stats][CleaningKeys.validation].append(1)
 
         return sample
         
 
     def process(self, sample):
         if self.image_key == "image":
-            return not sample[CleaningKeys.validation] 
+            return not sample[Fields.stats][CleaningKeys.validation] 
         
         elif self.image_key == "images":
-            validation = np.array(sample[CleaningKeys.validation])
+            validation = np.array(sample[Fields.stats][CleaningKeys.validation])
             
             if self.any:
                 return not validation.any()

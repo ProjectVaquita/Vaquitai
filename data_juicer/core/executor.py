@@ -228,13 +228,31 @@ class Executor:
                     tmp, dup_pairs = op.process(
                         dataset, self.tracer.show_num if self.open_tracer
                         and op_name in self.op_list_to_trace else 0)
-                    print(dup_pairs)
                     if self.open_tracer and op_name in self.op_list_to_trace:
                         self.tracer.trace_deduplicator(op_name, dup_pairs)
-                elif isinstance(op, Mycleanlab):   
+                elif isinstance(op, Mycleanlab):
+                    if Fields.stats not in dataset.features:
+                        # only add stats when calling filter op
+                        dataset = dataset.map(
+                            add_same_content_to_new_column,
+                            fn_kwargs={
+                                'new_column_name': Fields.stats,
+                                'initial_value': {}
+                            },
+                            num_proc=self.cfg.np,
+                            desc='Adding new column for stats')
+                        if self.cfg.use_checkpoint:
+                            prev = dataset
+                    
+                    dataset = op.pre_process(dataset, num_proc=self.cfg.np)
                     if self.cfg.use_checkpoint:
                         prev = dataset
-                    tmp = op.process(dataset, num_proc=self.cfg.np)
+                    tmp = dataset.filter(op.process,
+                                         num_proc=self.cfg.np,
+                                         desc=op_name + '_process')
+                    if self.open_tracer and op_name in self.op_list_to_trace:
+                        self.tracer.trace_filter(op_name, dataset, tmp)
+                        
                 elif isinstance(op, Generator):   
                     if self.cfg.use_checkpoint:
                         prev = dataset

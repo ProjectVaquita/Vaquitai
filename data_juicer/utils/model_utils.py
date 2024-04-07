@@ -572,8 +572,8 @@ def move_to_cuda(model, rank):
 
     for module in model:
         if callable(getattr(module, 'to', None)):
-            logger.info(
-                f'Moving {module.__class__.__name__} to CUDA device {rank}')
+            # logger.info(
+            #     f'Moving {module.__class__.__name__} to CUDA device {rank}')
             module.to(f'cuda:{rank}')
 
 
