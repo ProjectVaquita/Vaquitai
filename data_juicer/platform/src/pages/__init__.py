@@ -1,1 +1,1 @@
-from . import (data_analysis, data_process, doc, home, model_analysis)
+from . import (data_analysis, data_process, doc, home, model_analysis, report)
