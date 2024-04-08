@@ -222,11 +222,19 @@ class Tracer:
         # export the tracer result.
         res_name = f'duplicate-{op_name}.jsonl'
         dup_df = pd.DataFrame(dup_dict)
-        dup_df.to_json(os.path.join(self.work_dir, res_name),
-                       orient='records',
-                       lines=True,
-                       force_ascii=False)
+        # dup_df.to_json(os.path.join(self.work_dir, res_name),
+        #                orient='records',
+        #                lines=True,
+        #                force_ascii=False)
 
+        placeholder = 'N/A'
+        df_filled = dup_df.applymap(lambda x: placeholder if pd.isnull(x) else x)
+        with open(os.path.join(self.work_dir, res_name), 'w') as f:
+            for index, row in df_filled.iterrows():
+                json_line = {key: value for key, value in row.items() if value != placeholder}
+                f.write(json.dumps(json_line) + '\n') 
+        
+        
     def trace_mycleanlab(self, op_name: str, previous_ds: Dataset,
                      processed_ds: Dataset):
         """

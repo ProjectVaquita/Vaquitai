@@ -25,6 +25,7 @@ ISSUE_DICT = {
     '低信息-图像': 'cleanvision-is_low_information_issue',
     '不匹配-BLIP': 'filter-image_text_matching_filter',
     '不匹配-CLIP': 'filter-image_text_similarity_filter',
+    '缺失-图像缺失': 'filter-image_validation_filter',
     '低质量-字符重复': 'filter-character_repetition_filter',
     '低质量-词语重复': 'filter-word_repetition_filter',
     '低质量-图像模糊': 'cleanvision-is_blurry_issue',
@@ -33,7 +34,8 @@ ISSUE_DICT = {
     '低质量-图像极亮': 'cleanvision-is_light_issue',
     '低质量-图像比例1': 'filter-image_aspect_ratio_filter',
     '低质量-图像比例2': 'cleanvision-is_odd_aspect_ratio_issue',
-    '低质量-图像大小': 'cleanvision-is_odd_size_issue'
+    '低质量-图像大小': 'cleanvision-is_odd_size_issue',
+    '低质量-图像大小': 'filter-image_shape_filter'
 }
 
 # Main function to write data
