@@ -7,9 +7,13 @@ from typing import Dict, Union, List
 import numpy as np
 from PIL import Image
 
-def plot_dup_images(
-    orig: str,
-    image_list: List,
+
+IMAGE_KEY = "images"
+TEXT_KEY = "text"
+
+def plot_dups(
+    orig: dict,
+    dup_list: List,
     dup_amount: int,
     scores: bool = False,
     outfile: str = None,
@@ -20,11 +24,11 @@ def plot_dup_images(
     Args:
         image_dir: image directory where all files in duplicate_map are present.
         orig: filename for which duplicates are to be plotted.
-        image_list: List of duplicate filenames, could also be with scores (filename, score).
-        scores: Whether only filenames are present in the image_list or scores as well.
+        dup_list: List of duplicate filenames, could also be with scores (filename, score).
+        scores: Whether only filenames are present in the dup_list or scores as well.
         outfile:  Name of the file to save the plot.
     """
-    n_ims = len(image_list)
+    n_ims = len(dup_list)
     ncols = 4  # fixed for a consistent layout
     nrows = int(np.ceil(n_ims / ncols)) + 1
     fig = figure.Figure(figsize=(10, 14))
@@ -33,9 +37,13 @@ def plot_dup_images(
     ax = plt.subplot(
         gs[0, 1:3]
     )  # Always plot the original image in the middle of top row
-    ax.imshow(Image.open(orig))
-    ax.set_title('Duplicated: %d' % (dup_amount), color='red', ha='center')
-    # ax.text(1.0, 1.0, orig.split("/")[-1])
+    
+    orig_img, orig_text = orig[IMAGE_KEY][0], orig[TEXT_KEY][13:43] if len(orig[TEXT_KEY]) < 30 else orig[TEXT_KEY][13:43]
+    dup_imgs = sum([_[IMAGE_KEY] for _ in dup_list], [])
+    dup_texts = [_[TEXT_KEY][13:43] if len(_[TEXT_KEY]) < 30 else _[TEXT_KEY][13:43] + "..." for _ in dup_list]
+    
+    ax.imshow(Image.open(orig_img))
+    ax.set_title('Duplicated: %d\n%s\n%s' % (dup_amount, orig_img.split("/")[-1], orig_text), color='red', ha='center')
     ax.axis('off')
 
     for i in range(0, n_ims):
@@ -44,25 +52,20 @@ def plot_dup_images(
 
         ax = plt.subplot(gs[row_num, col_num])
         if scores:
-            ax.imshow(Image.open(image_list[i][0]))
-            # val = _formatter(image_list[i][1])
-            # title = ' '.join([image_list[i][0], f'({val})'])
-            # title = paths_dict[image_list[i][0]]
+            ax.imshow(Image.open(dup_imgs[i][0]))
+            # val = _formatter(dup_list[i][1])
+            # title = ' '.join([dup_list[i][0], f'({val})'])
+            # title = paths_dict[dup_list[i][0]]
         else:
-            ax.imshow(Image.open(image_list[i]))
-            # title = image_list[i]
-            # title = paths_dict[image_list[i]]
+            ax.imshow(Image.open(dup_imgs[i]))
+            # title = dup_list[i]
+            # title = paths_dict[dup_list[i]]
 
-        ax.set_title(image_list[i].split("/")[-1], fontsize=6)
+        ax.set_title("%s\n%s" % (dup_imgs[i].split("/")[-1], dup_texts[i]), fontsize=6)
         ax.axis('off')
     gs.tight_layout(fig)
     res = plt.gcf()
-    plt.close()
-    return res
-
     if outfile:
         plt.savefig(outfile, dpi=300)
-
-    plt.show()
     plt.close()
-    return 
+    return res

@@ -24,7 +24,7 @@ from pathlib import Path
 from PIL import Image
 from data_juicer.format.load import load_formatter
 from data_juicer.utils.model_utils import get_model, prepare_model
-from data_juicer.utils.vis import plot_dup_images
+from data_juicer.utils.vis import plot_dups
 from data_juicer.platform.src.utils.st_components import get_remote_ip
 import random
 

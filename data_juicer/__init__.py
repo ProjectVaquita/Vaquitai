@@ -69,8 +69,8 @@ def setup_cuda():
         _USE_CUDA = True
     else:
         _USE_CUDA = False
-    logger.debug(f'_USE_CUDA: {_USE_CUDA} | MP: {method} '
-                 f'({mp.current_process().name})')
+    # logger.debug(f'_USE_CUDA: {_USE_CUDA} | MP: {method} '
+    #              f'({mp.current_process().name})')
 
 
 def initialize():

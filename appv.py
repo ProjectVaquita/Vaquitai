@@ -43,7 +43,7 @@ def main():
         {"func": data_juicer.platform.src.pages.doc, "title": "文档", "icon": "book"},
         {"func": data_juicer.platform.src.pages.data_process, "title": "运行", "icon": "caret-right-square"}, 
         {"func": data_juicer.platform.src.pages.data_analysis, "title": "结果", "icon": "bar-chart-line"},
-        {"func": data_juicer.platform.src.pages.report, "title": "报告", "icon": "book"}
+        {"func": data_juicer.platform.src.pages.report, "title": "报告", "icon": "airplane-engines"}
     ]
     
 

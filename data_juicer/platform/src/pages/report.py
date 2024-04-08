@@ -2,7 +2,7 @@
 """
 :Date: 2023-02-19 15:05:02
 :LastEditTime: 2023-02-19 15:05:04
-:Description: 
+:Description: Optimize and comment the code
 """
 from loguru import logger
 import streamlit as st
@@ -13,53 +13,93 @@ import plotly.express as px
 import plotly.graph_objects as go
 from data_juicer.utils.mm_utils import SpecialTokens
 import os 
+from collections import defaultdict
+from data_juicer.utils.vis import plot_dups
 
+# Constants
+IMAGE_KEY = "images"
+TEXT_KEY = "text"
+ISSUE_DICT = {
+    '重复-图像重复': 'duplicate-image_deduplicator',
+    '重复-文本重复': 'duplicate-document_deduplicator',
+    '低信息-图像': 'cleanvision-is_low_information_issue',
+    '不匹配-BLIP': 'filter-image_text_matching_filter',
+    '不匹配-CLIP': 'filter-image_text_similarity_filter',
+    '低质量-字符重复': 'filter-character_repetition_filter',
+    '低质量-词语重复': 'filter-word_repetition_filter',
+    '低质量-图像模糊': 'cleanvision-is_blurry_issue',
+    '低质量-图像极黑': 'cleanvision-is_dark_issue',
+    '低质量-图像黑白': 'cleanvision-is_grayscale_issue',
+    '低质量-图像极亮': 'cleanvision-is_light_issue',
+    '低质量-图像比例1': 'filter-image_aspect_ratio_filter',
+    '低质量-图像比例2': 'cleanvision-is_odd_aspect_ratio_issue',
+    '低质量-图像大小': 'cleanvision-is_odd_size_issue'
+}
+
+# Main function to write data
 def write():
+    # Logging user details
     logger.info(f"enter doc page, user_name: {st.session_state['name']}, ip: {get_remote_ip()}")
+    
+    # Display title
     st.title('数据集报告')
-    project_path = "/home/beacon/Vaquitai/outputs/demo-vaquitai"
-
+    
+    # Paths
+    project_path = "/root/Vaquitai/outputs/demo-vaquitai"
+    tracer_path = f"{project_path}/trace"
+    
     # Load and calculate data
     stats = calculate_statistics(project_path)
     total_problems = sum(stats.values())
 
-    # Display speedometer chart (you will need to use an external library for this)
+    # Display speedometer chart
     display_speedometer_chart(stats)
+    
+    # Display pie chart
     display_pie_chart(stats)
     
-    display_images("/home/beacon/Vaquitai/outputs/demo-vaquitai/demo-processed.jsonl")
+    # File paths
+    file_paths = get_file_paths(tracer_path)
     
-    # st.markdown('<p class="big-font">数据清洗结果展示</p>', unsafe_allow_html=True)
-    # category_issue = st.selectbox("选择错误类型", list(cat_issue_dict.keys()))
-    # # amount = st.slider("展示数量", min_value=1, max_value=10, value=3, step=1)
-    # amount = 3
-    # if category_issue:
-    #     logger.info(f"click clean_sample_show button, {category_issue}, user_name: {st.session_state['name']}, ip: {get_remote_ip()}")
-    #     # selected_issues = dc_df[dc_df[issue_dict[category_issue]] == True]
-    #     selected_issues = dc_df.filter(lambda example: example[issue_dict[category_issue]] == True)
-    #     # selected_rows = selected_issues.sample(min(amount, len(selected_issues)))
-    #     # selected_rows = selected_issues.sample(seed=42).select([0, 1, 2, 3, 4])
-    #     selected_rows = selected_issues.shuffle()[:amount]
-    #     if category_issue != '重复':
-    #         random_images = selected_rows['image']
-    #         for i in range(0, len(random_images), images_per_col):
-    #             cols = st.columns(images_per_col)
-    #             for col, img_url in zip(cols, random_images[i:i+images_per_col]):
-    #                 col.image(img_url, use_column_width=True)
-    #     else:
-    #         ori_images = selected_rows['image']
-    #         dup_images = selected_rows['__dj__duplicated_pairs']
-    #         for i in range(0, len(ori_images), images_per_col):
-    #             cols = st.columns(images_per_col)
-    #             for col, ori_img, dup_imgs_all in zip(cols, ori_images[i:i+images_per_col], dup_images[i:i+images_per_col]):
-    #                 dup_imgs = random.sample(dup_imgs_all, min(len(dup_imgs_all), 12))
-    #                 display_image = plot_dup_images(ori_img, dup_imgs, len(dup_imgs_all))
-    #                 col.pyplot(display_image)       
-                
-                
+    # Problems dictionary
+    problems_dict = {file_path.split('/')[-1].split('.')[0]: file_path for file_path in file_paths}
+    
+    # Remove unused items from ISSUE_DICT
+    ISSUE_DICT_T = {key: val for key, val in ISSUE_DICT.items() if val in problems_dict.keys()}
+        
+    # Display section title
+    st.markdown('<p class="big-font">数据清洗结果展示</p>', unsafe_allow_html=True)
+    
+    # Selectbox for choosing issue type
+    category_issue = st.selectbox("选择错误类型", ISSUE_DICT_T.keys())
+    amount = 3
+    images_per_col = 3
+    
+    # Display selected data
+    if category_issue:
+        cat_df = problems_dict[ISSUE_DICT_T[category_issue]]
+        selected_issues = pd.read_json(cat_df, lines=True)
+        selected_rows = selected_issues.sample(n=amount)
+        
+        cols = st.columns(images_per_col)
+        if not category_issue.startswith('重复-'):
+            for j, (index, row) in enumerate(selected_rows.iterrows()):
+                images = row[IMAGE_KEY]
+                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % row[TEXT_KEY][13:43] if len(row[TEXT_KEY]) < 30 else row[TEXT_KEY][13:43]
+                cols[j].markdown(caption, unsafe_allow_html=True)
+                cols[j].image(images, use_column_width=True)
+        else:
+            for j, (index, row) in enumerate(selected_rows.iterrows()):
+                oris = row['ori']
+                dup_num = row['dup_num']
+                dups = [row[f"dup{_ + 1}"] for _ in range(dup_num)][:12]
+                display_image = plot_dups(oris, dups, dup_num)
+                cols[j].pyplot(display_image)
+
+# Display pie chart
 def display_pie_chart(stats):
     # Create pie chart
-    tmp_stats = stats
+    tmp_stats = stats.copy()
     tmp_stats.pop("Clean")
     fig = px.pie(
         names=tmp_stats.keys(),
@@ -74,24 +114,24 @@ def display_pie_chart(stats):
         width=800,  # Set the width of the chart
         height=600,  # Set the height of the chart
         legend=dict(font=dict(size=20)),  # Adjust legend font size here
-        title=dict(font=dict(size=48)  # Adjust title font size here
-    )
+        title=dict(font=dict(size=48))  # Adjust title font size here
     )
 
     # Display pie chart
     pie_chart = st.plotly_chart(fig, use_container_width=True)
-                    
-    
+
+# Display speedometer chart
 def display_speedometer_chart(stats):
     # Create figure
     fig = go.Figure()
     score = 100 * stats["Clean"] / sum(stats.values())
+    
     # Add trace
     fig.add_trace(go.Indicator(
         mode="gauge+number",
         value=score,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': "数据集得分" , 'font': {'size': 48}},
+        title={'text': "数据集得分", 'font': {'size': 48}},
         gauge={
             'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "dodgerblue"},
             'bar': {'color': "dodgerblue"},
@@ -99,8 +139,9 @@ def display_speedometer_chart(stats):
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 50], 'color': 'lightgray'},
-                {'range': [50, 75], 'color': 'gray'}],
+                {'range': [0, 60], 'color': 'lightgray'},
+                {'range': [60, 80], 'color': 'darkgray'},
+                {'range': [80, 100], 'color': 'gray'}],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.75,
@@ -129,32 +170,28 @@ def display_speedometer_chart(stats):
     # Display chart
     st.plotly_chart(fig, use_container_width=True)  
 
+# Get file paths
+def get_file_paths(folder_path):
+    file_paths = []
+    # Walk through all files and directories in the given folder
+    for root, directories, files in os.walk(folder_path):
+        for filename in files:
+            # Join the root path and the file name to get the absolute file path
+            file_paths.append(os.path.join(root, filename))
+    return file_paths
 
-# Load data function
-def load_data(category):
-    # Replace 'path_to_file.json' with the actual file path and ensure it is in the correct format
-    with open(f'{category}.json') as f:
-        data = json.load(f)
-    return data
-
-# Calculate statistics function
+# Calculate statistics
 def calculate_statistics(project_path):
-    tracer_path = "%s/trace" % project_path
-    output_path = "%s/demo-processed.jsonl" % project_path
-    def get_file_paths(folder_path):
-        file_paths = []
-        # Walk through all files and directories in the given folder
-        for root, directories, files in os.walk(folder_path):
-            for filename in files:
-                # Join the root path and the file name to get the absolute file path
-                file_paths.append(os.path.join(root, filename))
-        return file_paths
-    
+    tracer_path = f"{project_path}/trace"
+    output_path = f"{project_path}/demo-processed.jsonl"
+
+    # Function to get total line count
     def get_total_line_count(jsonl_file):
         with open(jsonl_file, 'r') as file:
             total_line_count = sum(1 for line in file)
         return total_line_count
     
+    # Function to get total duplicate numbers
     def get_total_dup_nums(jsonl_file):
         total_dup_nums = 0
         with open(jsonl_file, 'r') as file:
@@ -164,43 +201,24 @@ def calculate_statistics(project_path):
                 total_dup_nums += dup_num
         return total_dup_nums
 
-
     file_paths = get_file_paths(tracer_path)
     
-    problems_dict, stats_dict = {}, {}
+    problems_dict, stats_dict = {}, defaultdict(int)
     for file_path in file_paths:
         file_p = file_path.split('/')[-1].split('.')[0]
         typ = file_p.split('-')[0]
         problem = file_p.split('-')[-1].split(".")[0]
-        problems_dict[file_path] = problem
         
-        if typ == "duplicate":
+        if typ == "cleanvision":
+            continue
+        elif typ == "duplicate":
             stats_dict[problem] = get_total_dup_nums(file_path)
         else:
             stats_dict[problem] = get_total_line_count(file_path)
-            
-    stats_dict["Clean"] = get_total_line_count(output_path)
         
+        problems_dict[file_path] = problem
+        
+    stats_dict["Clean"] = get_total_line_count(output_path)
 
     return stats_dict 
 
-
-def display_images(jsonl_file, num_images=5):
-    st.title("Display Images with Labels")
-    import jsonlines
-    from PIL import Image
-    # Open the JSONL file
-    with jsonlines.open(jsonl_file) as reader:
-        for i, item in enumerate(reader):
-            if i >= num_images:
-                break
-            
-            # Get image URL
-            image_url = item["images"][0]
-            
-            # Load image from URL
-            image = Image.open(image_url)
-            
-            # Display image
-            st.image(image, caption="Caption: %s\n\nPath: %s" % (item["text"].split(SpecialTokens.image)[-1], image_url.split("/")[-1]))
-            

@@ -20,8 +20,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     """
 
     def __init__(self,
-                 issues: list = ["is_odd_size_issue",
-                                "is_odd_aspect_ratio_issue", 
+                 issues: list = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
                                 "is_low_information_issue", "is_light_issue", 
                                 "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"], 
                                 # "is_exact_duplicates_issue", "is_near_duplicates_issue"],

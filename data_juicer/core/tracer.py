@@ -3,6 +3,8 @@ import os
 import pandas as pd
 from datasets import Dataset
 from loguru import logger
+from data_juicer.utils.constant import DEFAULT_PREFIX, Fields
+import json
 
 
 class Tracer:
@@ -237,6 +239,11 @@ class Tracer:
         :param processed_ds: dataset processed by the filter
         :return:
         """
+        
+        issues = ["is_odd_size_issue","is_odd_aspect_ratio_issue", 
+                  "is_low_information_issue", "is_light_issue", 
+                  "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"]
+        
         if len(previous_ds) == len(processed_ds):
             logger.warning(f'Datasets before and after op [{op_name}] are all '
                            f'the same. Thus no comparison results would be '
@@ -285,3 +292,10 @@ class Tracer:
                           lines=True,
                           force_ascii=False)
         
+        for issue in issues:
+            tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+            if not tmp_df.empty:
+                tmp_df.to_json(os.path.join(self.work_dir, f'cleanvision-{issue}.jsonl'),
+                            orient='records',
+                            lines=True,
+                            force_ascii=False)

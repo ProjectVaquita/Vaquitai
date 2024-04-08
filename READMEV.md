@@ -13,7 +13,7 @@
 # 使用 Anaconda【推荐】
 git clone https://github.com/ProjectVaquitai/Vaquitai.git
 cd Vaquitai
-conda create --name vaquitai python==3.8
+conda create --name vaquitai python==3.9
 conda activate vaquitai
 pip install -v -e .[all]
 ```
@@ -30,12 +30,12 @@ pip install -v -e .[all]
 
 ```shell
 # 本地启动
-streamlit run app.py
+streamlit run appv.py
 ```
 
 ```shell
 # ssh 远程终端中启动
-streamlit run app.py --server.address 0.0.0.0 --server.port 80
+streamlit run appv.py --server.address 0.0.0.0 --server.port 80
 
 ```
 

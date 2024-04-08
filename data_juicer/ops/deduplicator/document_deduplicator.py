@@ -93,8 +93,7 @@ class DocumentDeduplicator(Deduplicator):
 
         def _filter_dup_helper(sample, hashes):
             hash = sample[HashKeys.hash]
-            if show_num > 0 and hash in dup_hashes \
-                    and len(dup_pairs[hash]) < 2:
+            if show_num > 0 and hash in dup_hashes:
                 # tracer is open and not enough duplicate sample pairs
                 dup_pairs[hash].append(sample)
             if hash in hashes:

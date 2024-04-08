@@ -113,7 +113,7 @@ def _is_package_available(
             package_exists = True
         except importlib.metadata.PackageNotFoundError:
             package_exists = False
-        logger.debug(f'Detected {pkg_name} version {package_version}')
+        # logger.debug(f'Detected {pkg_name} version {package_version}')
     if return_version:
         return package_exists, package_version
     else:
