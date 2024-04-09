@@ -18,6 +18,8 @@ import plotly.graph_objects as go
 import torch.nn.functional as F
 import streamlit as st
 import sweetviz as sv
+import plotly.express as px
+
 import extra_streamlit_components as stx
 import streamlit.components.v1 as components
 from pathlib import Path
@@ -40,7 +42,7 @@ issue_dict = {'重复': '__dj__is_image_duplicated_issue',
 
 @st.cache_resource
 def load_model():
-    model_key = prepare_model(model_type='hf_blip', model_key='Salesforce/blip-itm-base-coco')
+    model_key = prepare_model(model_type='huggingface',  pretrained_model_name_or_path='Salesforce/blip-itm-base-coco')
     model, processor = get_model(model_key)
     return model, processor
 
@@ -130,17 +132,64 @@ def plot_image_clusters(dataset):
     ).add_params(brush).properties(width=800, height=600)
     return marker_chart
 
+def scatter_plot(df_dataset, x_col, y_col, color_col, hover_data):
+    color_discrete_map = {'retained': 'green', 'discarded':'red'}
+    fig = px.scatter(
+        df_dataset,
+        x=x_col,
+        y=y_col,
+        color=color_col,
+        hover_data=hover_data,
+        color_discrete_map=color_discrete_map,
+        opacity = 0.6,
+        size_max=10,
+    )
+
+    return fig
+
+def parse_dups(dup_dataset, trace_dataset):
+    for sample in dup_dataset:
+        for i in range(1, int(sample['dup_num']+1)):
+            key = f'dup{i}'
+            trace_dataset['image'].extend(sample[key]['images'])
+            trace_dataset['image_caption'].extend(sample[key]['__dj__stats__']['image_caption'])
+            trace_dataset['image_embedding_2d'].extend(sample[key]['__dj__stats__']['image_embedding_2d'])
 def write():
     chosen_id = stx.tab_bar(data=[
                     stx.TabBarItemData(id="data_show", title="数据展示", description=""),
-                    stx.TabBarItemData(id="data_cleaning", title="数据清洗", description=""),
+                    # stx.TabBarItemData(id="data_cleaning", title="数据清洗", description=""),
                     stx.TabBarItemData(id="data_mining", title="数据挖掘", description=""),
                     stx.TabBarItemData(id="data_insights", title="数据洞察", description=""),
                 ], default="data_show")
 
     try:
-        processed_dataset = load_dataset('./outputs/demo-vaquitai/demo-processed.jsonl')  
-        # processed_dataset = pd.DataFrame(processed_dataset)
+        processed_dataset = load_dataset('./outputs/demo-vaquitai/demo-processed.jsonl') 
+        stats_dataset = load_dataset('./outputs/demo-vaquitai/demo-processed_stats.jsonl') 
+        trace_dir = 'outputs/demo-vaquitai/trace'
+        trace_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[]}
+        for path in Path(trace_dir).glob('*.jsonl'):
+            if path.name.startswith('duplicate'):
+                dup_dataset = load_dataset(str(path))
+                parse_dups(dup_dataset, trace_dataset)
+            elif path.name.startswith('filter'):
+                filter_dataset = load_dataset(str(path))
+                trace_dataset['image'].extend([j for sub in filter_dataset['images'] for j in sub])
+                trace_dataset['image_caption'].extend([j for sub in filter_dataset['__dj__stats__.image_caption'] for j in sub])
+                trace_dataset['image_embedding_2d'].extend([j for sub in filter_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
+            else:
+                continue
+        total_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[], 'state':[]}
+        total_dataset['image'].extend([j for sub in processed_dataset['images'] for j in sub])
+        total_dataset['image_caption'].extend([j for sub in stats_dataset['__dj__stats__.image_caption'] for j in sub])
+        total_dataset['image_embedding_2d'].extend([j for sub in stats_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
+        total_dataset['state'].extend(['retained'] * len(total_dataset['image']))
+        
+        total_dataset['image'].extend(trace_dataset['image'])
+        total_dataset['image_caption'].extend(trace_dataset['image_caption'])
+        total_dataset['image_embedding_2d'].extend(trace_dataset['image_embedding_2d'])
+        total_dataset['state'].extend(['discarded'] * len(trace_dataset['image']))
+        df_total_dataset = pd.DataFrame(total_dataset)
+ 
     except:
         st.warning('请先执行数据处理流程 !')
         st.stop()
@@ -281,11 +330,12 @@ def write():
     elif chosen_id == 'data_mining':
         logger.info(f"enter data_mining page, user_name: {st.session_state['name']}, ip: {get_remote_ip()}")
 
-        if '__dj__image_embedding_2d' not in processed_dataset.features:
-            st.warning('请先执行数据处理流程(加入特征提取的算子) !')
-            st.stop()
-
-        faiss_index = create_faiss_index(processed_dataset['__dj__image_embedding'])
+        # if '__dj__image_embedding_2d' not in processed_dataset.features:
+        #     st.warning('请先执行数据处理流程(加入特征提取的算子) !')
+        #     st.stop()
+        emb_list = np.array([j for sub in stats_dataset['__dj__stats__.image_embedding'] for j in sub])
+        image_list = [j for sub in processed_dataset['images'] for j in sub]
+        faiss_index = create_faiss_index(emb_list)
         model, processor = load_model()
 
         # 用户输入文本框
@@ -300,7 +350,7 @@ def write():
             text_feature = F.normalize(model.text_proj(text_output.last_hidden_state[:, 0, :]), dim=-1).detach().cpu().numpy() 
 
             D, I = faiss_index.search(text_feature.astype('float32'), 10)
-            retrieval_image_list = [processed_dataset['image'][i] for i in I[0]]
+            retrieval_image_list = [image_list[i] for i in I[0]]
             # display_image_grid(retrieval_image_list, 5, 300)
             # Display the retrieved images using st.image
             for idx, image_path in enumerate(retrieval_image_list):
@@ -312,10 +362,10 @@ def write():
         compare_features = list(processed_dataset.features)
 
         with col1:
-            category_1 = st.selectbox('选择数据集1', list(data_source.keys()))
+            category_1 = st.selectbox('选择数据集1', ['保留数据'])
 
         with col2:
-            category_2 = st.selectbox('选择数据集2', ['None'])
+            category_2 = st.selectbox('选择数据集2', ['清理数据'])
 
         with col3:
             st.write(' ')
@@ -326,21 +376,27 @@ def write():
         array_columns = df1.select_dtypes(include=[np.ndarray]).columns
         df1 = df1.drop(columns=array_columns)
 
-        if category_2 != 'None':
-            # df2 = processed_dataset.to_pandas()[compare_features]
-            dc_df = processed_dataset.filter(lambda example: example['data_source'] == data_source[category_2])
-            df2 = dc_df.flatten().to_pandas()[compare_features]
+        # if category_2 != 'None':
+        #     df2 = trace_dataset.to_pandas()[compare_features]
 
        
         if analysis_button:
             logger.info(f"click analysis button, {category_1}, {category_2}, user_name: {st.session_state['name']}, ip: {get_remote_ip()}")
             # st.markdown('<iframe src="http://datacentric.club:3000/" width="600" height="500"></iframe>', unsafe_allow_html=True)
-            if '__dj__image_embedding_2d'  in processed_dataset.features:
-                st.markdown("<h1 style='text-align: center; font-size:25px; color: black;'>数据分布可视化", unsafe_allow_html=True)
-                plot = plot_image_clusters(processed_dataset)
-                st.altair_chart(plot)
-            else:
-                st.warning('请先执行数据处理流程(加入特征提取的算子) !')
+            
+
+            st.markdown("<h1 style='text-align: center; font-size:25px; color: black;'>数据分布可视化", unsafe_allow_html=True)
+            # plot = plot_image_clusters(processed_dataset)
+            # st.altair_chart(plot)
+            def gen_text(image_path, caption):
+                return f"image: {image_path}<br>caption: {caption}"
+
+            df_total_dataset['emb2d_x'] = np.array(df_total_dataset['image_embedding_2d'].tolist())[:, 0]
+            df_total_dataset['emb2d_y'] = np.array(df_total_dataset['image_embedding_2d'].tolist())[:, 1]
+            df_total_dataset['text'] = df_total_dataset.apply(lambda row: gen_text(row['image'], row['image_caption']), axis=1) 
+            fig = scatter_plot(df_total_dataset, x_col='emb2d_x', y_col='emb2d_y', color_col='state',hover_data='text')
+            st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
 
             html_save_path = os.path.join('frontend', st.session_state['username'], \
                                           category_1 + '_vs_' + category_2 + '_EDA.html')
@@ -351,6 +407,6 @@ def write():
                         if category_2 == 'None':
                             report = sv.analyze(df1)
                         else:
-                            report = sv.compare(df1, df2)
+                            report = sv.analyze(df1)
                     report.show_html(filepath=html_save_path, open_browser=False, layout='vertical', scale=1.0)
                 components.html(open(html_save_path).read(), width=1100, height=1200, scrolling=True)

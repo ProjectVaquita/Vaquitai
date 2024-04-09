@@ -4,7 +4,7 @@ import numpy as np
 from jsonargparse.typing import PositiveInt
 
 from data_juicer.utils.availability_utils import AvailabilityChecking
-from data_juicer.utils.constant import Fields, StatsKeys, GenKeys
+from data_juicer.utils.constant import Fields, StatsKeys
 from data_juicer.utils.mm_utils import load_image
 from data_juicer.utils.model_utils import get_model, prepare_model
 
@@ -77,12 +77,15 @@ class ImageCaptionGenerator(Generator):
 
     def caption(self, sample, context=True):
         # there is no image in this sample
+        if Fields.stats not in sample:
+            sample[Fields.stats] = {}
+
         if self.image_key not in sample or not sample[self.image_key]:
             sample[Fields.stats][StatsKeys.image_sizes] = np.array(
                 [], dtype=np.float64)
             return sample
 
-        sample[GenKeys.image_caption] = []
+        sample[Fields.stats][StatsKeys.image_caption] = []
         loaded_image_keys = sample[self.image_key]
         if not isinstance(loaded_image_keys, list):
             loaded_image_keys = [loaded_image_keys]
@@ -95,7 +98,7 @@ class ImageCaptionGenerator(Generator):
             inputs = self.img_processor(images=image, return_tensors="pt").to(self.device)
             outputs = self.model.generate(**inputs)
             image_caption_text = self.img_processor.decode(outputs[0], skip_special_tokens=True)
-            sample[GenKeys.image_caption].append(image_caption_text)
+            sample[Fields.stats][StatsKeys.image_caption].append(image_caption_text)
 
         return sample
 

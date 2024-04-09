@@ -7,7 +7,7 @@ from torchvision import transforms
 
 
 from data_juicer.utils.availability_utils import AvailabilityChecking
-from data_juicer.utils.constant import Fields, StatsKeys, EmbKeys
+from data_juicer.utils.constant import Fields, StatsKeys
 from data_juicer.utils.mm_utils import (SpecialTokens, load_image,
                                         remove_special_tokens)
 from data_juicer.utils.model_utils import get_model, prepare_model
@@ -47,11 +47,14 @@ class ImageFeatureExtractGenerator(Generator):
 
     def compute_embedding(self, sample):
         # check if it's computed already
-        if EmbKeys.image_embedding in sample:
+        if Fields.stats not in sample:
+            sample[Fields.stats] = {}
+            
+        if StatsKeys.image_embedding in sample[Fields.stats]:
             return sample
 
         # there is no image in this sample
-        sample[EmbKeys.image_embedding] = []
+        sample[Fields.stats][StatsKeys.image_embedding] = []
         if self.image_key not in sample or not sample[self.image_key]:
             return sample
 
@@ -67,7 +70,7 @@ class ImageFeatureExtractGenerator(Generator):
             # compute image embeddings
             image_embeds = self.model.vision_model(image)[0] 
             image_feature = F.normalize(self.model.vision_proj(image_embeds[:,0,:]),dim=-1).half()
-            sample[EmbKeys.image_embedding].append(image_feature.cpu().tolist()[0])
+            sample[Fields.stats][StatsKeys.image_embedding].append(image_feature.cpu().tolist()[0])
 
         return sample
 

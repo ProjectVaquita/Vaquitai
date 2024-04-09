@@ -69,17 +69,21 @@ class FeatureReduceGenerator(Generator):
         :return: deduplicated dataset and the sampled duplicate pairs.
         """
         # no need to deduplicate because too few samples
-        image_embeddings = dataset[EmbKeys.image_embedding]
+        index = '.'.join([Fields.stats, StatsKeys.image_embedding])
+        image_embeddings = dataset[index]
+        image_paths = dataset[self.image_key]
 
         image_embeddings_flat = [emb for sublist in image_embeddings for emb in sublist]
         image_embeddings_flat = np.array(image_embeddings_flat)
+        image_paths_flat = [img for sublist in image_paths for img in sublist]
         embeddings_2d_flat = self.model.fit_transform(image_embeddings_flat).tolist()
-        
-        embeddings_2d = []
-        cnt = 0
-        for idx, emb in enumerate(image_embeddings):
-            length = len(emb)
-            embeddings_2d.append(embeddings_2d_flat[cnt:cnt+length])
-            cnt += length
-        dataset = dataset.add_column(name=EmbKeys.image_embedding_2d, column=embeddings_2d)
+        img_emb2d_map = {image_paths_flat[i]:embeddings_2d_flat[i] for i in range(len(image_paths_flat))}
+
+        def save_emb2d(sample):
+            emb2d_list = [img_emb2d_map[img] for img in sample[self.image_key]]
+            sample[Fields.stats][StatsKeys.image_embedding_2d] = emb2d_list
+            return sample
+
+        dataset = dataset.map(save_emb2d,
+                              desc= 'image_caption_process')
         return dataset

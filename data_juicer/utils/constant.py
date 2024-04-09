@@ -124,6 +124,8 @@ class StatsKeysConstant(object):
     num_token = 'num_token'
     num_words = 'num_words'
     word_rep_ratio = 'word_rep_ratio'
+    text_embedding = 'text_embedding'
+    text_embedding_2d = 'text_embedding_2d'
 
     # image
     aspect_ratios = 'aspect_ratios'
@@ -132,6 +134,10 @@ class StatsKeysConstant(object):
     image_sizes = 'image_sizes'
     face_ratios = 'face_ratios'
     face_detections = 'face_detections'
+    image_embedding = 'image_embedding'
+    image_embedding_2d = 'image_embedding_2d'
+    image_caption = 'image_caption'
+    
 
     # multimodal
     image_text_similarity = 'image_text_similarity'
@@ -205,10 +211,6 @@ class EmbKeys(object):
     text_embedding = DEFAULT_PREFIX + 'text_embedding'
     image_embedding_2d = DEFAULT_PREFIX + 'image_embedding_2d'
     text_embedding_2d = DEFAULT_PREFIX + 'text_embedding_2d'
-
-
-class GenKeys(object):
-    image_caption = DEFAULT_PREFIX + 'image_caption'
 
 
 class InterVars(object):
