@@ -47,7 +47,7 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "/root/Vaquitai/outputs/demo-vaquitai"
+    project_path = "outputs/demo-vaquitai"
     tracer_path = f"{project_path}/trace"
     
     # Load and calculate data

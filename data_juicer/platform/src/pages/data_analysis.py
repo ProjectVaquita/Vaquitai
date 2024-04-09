@@ -150,8 +150,8 @@ def scatter_plot(df_dataset, x_col, y_col, color_col, hover_data):
 
     return fig
 
-def parse_dups(dup_dataset, trace_dataset):
-    for sample in dup_dataset:
+def parse_dups(df_dup_dataset, trace_dataset):
+    for idx, sample in df_dup_dataset.iterrows():
         for i in range(1, int(sample['dup_num']+1)):
             key = f'dup{i}'
             trace_dataset['image'].extend(sample[key]['images'])
@@ -175,8 +175,8 @@ def write():
     trace_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[]}
     for path in Path(trace_dir).glob('*.jsonl'):
         if path.name.startswith('duplicate'):
-            dup_dataset = load_dataset(str(path))
-            parse_dups(dup_dataset, trace_dataset)
+            df_dup_dataset = pd.read_json(str(path), lines=True)
+            parse_dups(df_dup_dataset, trace_dataset)
         elif path.name.startswith('filter'):
             filter_dataset = load_dataset(str(path))
             trace_dataset['image'].extend([j for sub in filter_dataset['images'] for j in sub])
