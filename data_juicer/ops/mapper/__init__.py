@@ -23,6 +23,6 @@ from . import (audio_ffmpeg_wrapped_mapper, chinese_convert_mapper,
                video_split_by_key_frame_mapper, video_split_by_scene_mapper,
                video_tagging_from_audio_mapper,
                video_tagging_from_frames_mapper,
-               whitespace_normalization_mapper)
+               whitespace_normalization_mapper, image_text_similarity_mapper)
 
 # yapf: enable

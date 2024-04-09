@@ -8,10 +8,10 @@ from data_juicer.utils.mm_utils import (SpecialTokens, load_data_with_context,
                                         load_image, remove_special_tokens)
 from data_juicer.utils.model_utils import get_model, prepare_model
 
-from ..base_op import OPERATORS, Filter
+from ..base_op import OPERATORS, Mapper
 from ..op_fusion import LOADED_IMAGES
 
-OP_NAME = 'image_text_similarity_filter'
+OP_NAME = 'image_text_feature_mapper'
 
 with AvailabilityChecking(['torch', 'transformers'], OP_NAME):
 
@@ -24,7 +24,7 @@ with AvailabilityChecking(['torch', 'transformers'], OP_NAME):
 
 @OPERATORS.register_module(OP_NAME)
 @LOADED_IMAGES.register_module(OP_NAME)
-class ImageTextSimilarityFilter(Filter):
+class ImageTextFeatureMapper(Mapper):
     """Filter to keep samples those similarities between image and text
     within a specific range."""
 
@@ -76,7 +76,7 @@ class ImageTextSimilarityFilter(Filter):
         self.horizontal_flip = horizontal_flip
         self.vertical_flip = vertical_flip
 
-    def compute_stats(self, sample, rank=None, context=False):
+    def process(self, sample, rank=None, context=False):
         # check if it's computed already
         if StatsKeys.image_text_similarity in sample[Fields.stats]:
             return sample
@@ -126,6 +126,8 @@ class ImageTextSimilarityFilter(Filter):
 
                 outputs = model(**inputs)
                 chunk_logits = outputs.logits_per_text.detach().cpu() / 100.0
+                sample[Fields.stats][StatsKeys.image_embedding] = outputs.image_embeds.detach().cpu()
+                sample[Fields.stats][StatsKeys.text_embedding] = outputs.text_embeds.detach().cpu()
                 if self.reduce_mode == 'avg':
                     chunk_similarity = chunk_logits.mean()
                 elif self.reduce_mode == 'max':
@@ -138,19 +140,3 @@ class ImageTextSimilarityFilter(Filter):
         sample[Fields.stats][StatsKeys.image_text_similarity] = similarity
 
         return sample
-
-    def process(self, sample, rank=None):
-        similarity = sample[Fields.stats][StatsKeys.image_text_similarity]
-        if len(similarity) <= 0:
-            return True
-
-        keep_bools = np.array([
-            self.min_score <= sim_value <= self.max_score
-            for sim_value in similarity
-        ])
-
-        # different strategies
-        if self.any:
-            return keep_bools.any()
-        else:
-            return keep_bools.all()

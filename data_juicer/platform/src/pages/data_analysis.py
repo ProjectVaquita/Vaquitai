@@ -40,9 +40,12 @@ issue_dict = {'重复': '__dj__is_image_duplicated_issue',
                 '极暗': '__dj__is_dark_issue', 
                 '模糊': '__dj__is_blurry_issue'}
 
+CAPTION_KEY = "text"
+ROOT_DIR = "./outputs/demo-vaquitai"
+
 @st.cache_resource
-def load_model():
-    model_key = prepare_model(model_type='huggingface',  pretrained_model_name_or_path='Salesforce/blip-itm-base-coco')
+def load_model(model_id: str = 'Salesforce/blip-itm-base-coco'):
+    model_key = prepare_model(model_type='huggingface',  pretrained_model_name_or_path=model_id)
     model, processor = get_model(model_key)
     return model, processor
 
@@ -152,7 +155,10 @@ def parse_dups(dup_dataset, trace_dataset):
         for i in range(1, int(sample['dup_num']+1)):
             key = f'dup{i}'
             trace_dataset['image'].extend(sample[key]['images'])
-            trace_dataset['image_caption'].extend(sample[key]['__dj__stats__']['image_caption'])
+            if CAPTION_KEY == "text":
+                trace_dataset['image_caption'].extend([sample[key][CAPTION_KEY]])
+            else:
+                trace_dataset['image_caption'].extend(sample[key]['__dj__stats__']['image_caption'])
             trace_dataset['image_embedding_2d'].extend(sample[key]['__dj__stats__']['image_embedding_2d'])
 def write():
     chosen_id = stx.tab_bar(data=[
@@ -162,37 +168,43 @@ def write():
                     stx.TabBarItemData(id="data_insights", title="数据洞察", description=""),
                 ], default="data_show")
 
-    try:
-        processed_dataset = load_dataset('./outputs/demo-vaquitai/demo-processed.jsonl') 
-        stats_dataset = load_dataset('./outputs/demo-vaquitai/demo-processed_stats.jsonl') 
-        trace_dir = 'outputs/demo-vaquitai/trace'
-        trace_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[]}
-        for path in Path(trace_dir).glob('*.jsonl'):
-            if path.name.startswith('duplicate'):
-                dup_dataset = load_dataset(str(path))
-                parse_dups(dup_dataset, trace_dataset)
-            elif path.name.startswith('filter'):
-                filter_dataset = load_dataset(str(path))
-                trace_dataset['image'].extend([j for sub in filter_dataset['images'] for j in sub])
-                trace_dataset['image_caption'].extend([j for sub in filter_dataset['__dj__stats__.image_caption'] for j in sub])
-                trace_dataset['image_embedding_2d'].extend([j for sub in filter_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
+    # try:
+    processed_dataset = load_dataset('%s/demo-processed.jsonl' % ROOT_DIR) 
+    stats_dataset = load_dataset('%s/demo-processed_stats.jsonl' % ROOT_DIR) 
+    trace_dir = '%s/trace' % ROOT_DIR
+    trace_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[]}
+    for path in Path(trace_dir).glob('*.jsonl'):
+        if path.name.startswith('duplicate'):
+            dup_dataset = load_dataset(str(path))
+            parse_dups(dup_dataset, trace_dataset)
+        elif path.name.startswith('filter'):
+            filter_dataset = load_dataset(str(path))
+            trace_dataset['image'].extend([j for sub in filter_dataset['images'] for j in sub])
+            if CAPTION_KEY == "text":
+                trace_dataset['image_caption'].extend([sub for sub in filter_dataset[CAPTION_KEY]])
             else:
-                continue
-        total_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[], 'state':[]}
-        total_dataset['image'].extend([j for sub in processed_dataset['images'] for j in sub])
+                trace_dataset['image_caption'].extend([j for sub in filter_dataset['__dj__stats__.image_caption'] for j in sub])
+            trace_dataset['image_embedding_2d'].extend([j for sub in filter_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
+        else:
+            continue
+    total_dataset = {'image':[], 'image_caption':[], 'image_embedding_2d':[], 'state':[]}
+    total_dataset['image'].extend([j for sub in processed_dataset['images'] for j in sub])
+    if CAPTION_KEY == "text":
+        total_dataset['image_caption'].extend([sub for sub in processed_dataset[CAPTION_KEY]])
+    else:
         total_dataset['image_caption'].extend([j for sub in stats_dataset['__dj__stats__.image_caption'] for j in sub])
-        total_dataset['image_embedding_2d'].extend([j for sub in stats_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
-        total_dataset['state'].extend(['retained'] * len(total_dataset['image']))
-        
-        total_dataset['image'].extend(trace_dataset['image'])
-        total_dataset['image_caption'].extend(trace_dataset['image_caption'])
-        total_dataset['image_embedding_2d'].extend(trace_dataset['image_embedding_2d'])
-        total_dataset['state'].extend(['discarded'] * len(trace_dataset['image']))
-        df_total_dataset = pd.DataFrame(total_dataset)
+    total_dataset['image_embedding_2d'].extend([j for sub in stats_dataset['__dj__stats__.image_embedding_2d'] for j in sub])
+    total_dataset['state'].extend(['retained'] * len(total_dataset['image']))
+    
+    total_dataset['image'].extend(trace_dataset['image'])
+    total_dataset['image_caption'].extend(trace_dataset['image_caption'])
+    total_dataset['image_embedding_2d'].extend(trace_dataset['image_embedding_2d'])
+    total_dataset['state'].extend(['discarded'] * len(trace_dataset['image']))
+    df_total_dataset = pd.DataFrame(total_dataset)
  
-    except:
-        st.warning('请先执行数据处理流程 !')
-        st.stop()
+    # except:
+    #     st.warning('请先执行数据处理流程 !')
+    #     st.stop()
 
     # TODO: Automatically find data source
     # data_source = {'BDD100K-train': 'train', 'BDD100K-val': 'val', 'BDD100K-test': 'test'}
@@ -336,7 +348,7 @@ def write():
         emb_list = np.array([j for sub in stats_dataset['__dj__stats__.image_embedding'] for j in sub])
         image_list = [j for sub in processed_dataset['images'] for j in sub]
         faiss_index = create_faiss_index(emb_list)
-        model, processor = load_model()
+        model, processor = load_model('openai/clip-vit-base-patch32')
 
         # 用户输入文本框
         input_text = st.text_input("", 'a picture of horse')
@@ -345,10 +357,19 @@ def write():
         search_button = st.button("搜索", type="primary", use_container_width=True)
 
         if search_button:
-            inputs = processor(text=input_text, return_tensors="pt")
-            text_output = model.text_encoder(inputs.input_ids, attention_mask=inputs.attention_mask, return_dict=True) 
-            text_feature = F.normalize(model.text_proj(text_output.last_hidden_state[:, 0, :]), dim=-1).detach().cpu().numpy() 
-
+            # inputs = processor(text=input_text, return_tensors="pt")
+            # text_output = model.text_encoder(inputs.input_ids, attention_mask=inputs.attention_mask, return_dict=True) 
+            # text_feature = F.normalize(model.text_proj(text_output.last_hidden_state[:, 0, :]), dim=-1).detach().cpu().numpy() 
+            inputs = processor(text=text_chunk,
+                    return_tensors='pt',
+                    truncation=True,
+                    max_length=model.config.text_config.
+                    max_position_embeddings,
+                    padding=True).to(model.device)
+            outputs = model(**inputs)
+            text_feature = outputs.text_embeds.detach().cpu()
+            
+            
             D, I = faiss_index.search(text_feature.astype('float32'), 10)
             retrieval_image_list = [image_list[i] for i in I[0]]
             # display_image_grid(retrieval_image_list, 5, 300)

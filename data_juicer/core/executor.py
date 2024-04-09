@@ -178,6 +178,16 @@ class Executor:
                 op_proc = self.calculate_np(op, op_name)
             try:
                 if isinstance(op, Mapper):
+                    if Fields.stats not in dataset.features:
+                        # only add stats when calling filter op
+                        dataset = dataset.map(
+                            add_same_content_to_new_column,
+                            fn_kwargs={
+                                'new_column_name': Fields.stats,
+                                'initial_value': {}
+                            },
+                            num_proc=self.cfg.np,
+                            desc='Adding new column for stats')
                     tmp = dataset.map(function=op.process,
                                       num_proc=op_proc,
                                       with_rank=with_rank,
@@ -251,7 +261,7 @@ class Executor:
                                          num_proc=self.cfg.np,
                                          desc=op_name + '_process')
                     if self.open_tracer and op_name in self.op_list_to_trace:
-                        self.tracer.trace_filter(op_name, dataset, tmp)
+                        self.tracer.trace_mycleanlab(op_name, dataset, tmp)
                         
                 elif isinstance(op, Generator):   
                     if self.cfg.use_checkpoint:
