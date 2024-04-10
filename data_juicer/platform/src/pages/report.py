@@ -15,6 +15,7 @@ from data_juicer.utils.mm_utils import SpecialTokens
 import os 
 from collections import defaultdict
 from data_juicer.utils.vis import plot_dups
+from data_juicer.utils.mm_utils import remove_special_tokens
 
 # Constants
 IMAGE_KEY = "images"
@@ -47,7 +48,7 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "outputs/demo-vaquitai"
+    project_path = "./outputs/demo-vaquitai"
     tracer_path = f"{project_path}/trace"
     
     # Load and calculate data
@@ -87,7 +88,8 @@ def write():
         if not category_issue.startswith('重复-'):
             for j, (index, row) in enumerate(selected_rows.iterrows()):
                 images = row[IMAGE_KEY]
-                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % row[TEXT_KEY][13:43] if len(row[TEXT_KEY]) < 30 else row[TEXT_KEY][13:43]
+                text = remove_special_tokens(row[TEXT_KEY])
+                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len() < 30 else text[:30]
                 cols[j].markdown(caption, unsafe_allow_html=True)
                 cols[j].image(images, use_column_width=True)
         else:

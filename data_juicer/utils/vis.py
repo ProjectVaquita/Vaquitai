@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib import figure
 from pathlib import Path, PurePath
 from typing import Dict, Union, List
+from data_juicer.utils.mm_utils import remove_special_tokens
 
 import numpy as np
 from PIL import Image
@@ -38,7 +39,8 @@ def plot_dups(
         gs[0, 1:3]
     )  # Always plot the original image in the middle of top row
     
-    orig_img, orig_text = orig[IMAGE_KEY][0], orig[TEXT_KEY][13:43] if len(orig[TEXT_KEY]) < 30 else orig[TEXT_KEY][13:43]
+    txt = remove_special_tokens(orig[TEXT_KEY])
+    orig_img, orig_text = orig[IMAGE_KEY][0], txt if len(txt) < 30 else txt[:30]
     dup_imgs = sum([_[IMAGE_KEY] for _ in dup_list], [])
     dup_texts = [_[TEXT_KEY][13:43] if len(_[TEXT_KEY]) < 30 else _[TEXT_KEY][13:43] + "..." for _ in dup_list]
     

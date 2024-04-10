@@ -6,6 +6,7 @@ from loguru import logger
 from data_juicer.utils.availability_utils import AvailabilityChecking
 from data_juicer.utils.constant import Fields, StatsKeys
 from data_juicer.utils.model_utils import get_model, prepare_model
+from data_juicer.utils.mm_utils import remove_special_tokens
 
 from ..base_op import OPERATORS, Filter
 
@@ -54,6 +55,7 @@ class LanguageIDScoreFilter(Filter):
             return sample
 
         text = sample[self.text_key].lower().replace('\n', ' ')
+        text = remove_special_tokens(text)
         ft_model = get_model(self.model_key)
         if ft_model is None:
             err_msg = 'Model not loaded. Please retry later.'
