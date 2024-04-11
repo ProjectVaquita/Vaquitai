@@ -27,6 +27,7 @@ ISSUE_DICT = {
     '不匹配-BLIP': 'filter-image_text_matching_filter',
     '不匹配-CLIP': 'filter-image_text_similarity_filter',
     '缺失-图像缺失': 'filter-image_validation_filter',
+    '低质量-非英语': 'filter-language_id_score_filter',
     '低质量-字符重复': 'filter-character_repetition_filter',
     '低质量-词语重复': 'filter-word_repetition_filter',
     '低质量-图像模糊': 'cleanvision-is_blurry_issue',
@@ -36,7 +37,8 @@ ISSUE_DICT = {
     '低质量-图像比例1': 'filter-image_aspect_ratio_filter',
     '低质量-图像比例2': 'cleanvision-is_odd_aspect_ratio_issue',
     '低质量-图像大小': 'cleanvision-is_odd_size_issue',
-    '低质量-图像大小': 'filter-image_shape_filter'
+    '低质量-图像大小': 'filter-image_shape_filter',
+    '优质数据': 'demo-processed'
 }
 
 # Main function to write data
@@ -80,7 +82,10 @@ def write():
     
     # Display selected data
     if category_issue:
-        cat_df = problems_dict[ISSUE_DICT_T[category_issue]]
+        if category_issue == '优质数据':
+            cat_df = "%s/demo-processed.jsonl" % project_path
+        else:
+            cat_df = problems_dict[ISSUE_DICT_T[category_issue]]
         selected_issues = pd.read_json(cat_df, lines=True)
         selected_rows = selected_issues.sample(n=amount)
         
@@ -89,7 +94,7 @@ def write():
             for j, (index, row) in enumerate(selected_rows.iterrows()):
                 images = row[IMAGE_KEY]
                 text = remove_special_tokens(row[TEXT_KEY])
-                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len() < 30 else text[:30]
+                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len(text) < 30 else text[:30]
                 cols[j].markdown(caption, unsafe_allow_html=True)
                 cols[j].image(images, use_column_width=True)
         else:

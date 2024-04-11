@@ -25,6 +25,7 @@ class CleanvisionMycleanlab(Mycleanlab):
                                 "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"], 
                                 # "is_exact_duplicates_issue", "is_near_duplicates_issue"],
                  any_or_all: str = 'any',
+                 keep_all: bool = False,
                  *args,
                  **kwargs):
         """
@@ -39,13 +40,9 @@ class CleanvisionMycleanlab(Mycleanlab):
             raise ValueError(f'Keep strategy [{any_or_all}] is not supported. '
                              f'Can only be one of ["any", "all"].')
         self.any = (any_or_all == 'any')
+        self.keep_all = keep_all
         
-    # def save_results(self, sample):
-    #     for issue in self.issues:
-    #         index = self.hf_dataset[self.image_key + "_path"].index(sample.get(self.image_key))
-    #         sample[Fields.stats][DEFAULT_PREFIX + issue] = self.res_df.iloc[[index]].get(issue).to_list()[0]
-    #     return sample
-
+        
     def save_results(self, sample, sample_index):
         for issue in self.issues:
             images_list = sample.get(self.image_key)
@@ -103,11 +100,14 @@ class CleanvisionMycleanlab(Mycleanlab):
     
     
     def process(self, sample):
-        for issue in self.issues:
-            tmp = sample[Fields.stats][DEFAULT_PREFIX + issue]
-            if True in tmp:
-                return False
-        return True
+        if self.keep_all:
+            return True
+        else:
+            for issue in self.issues:
+                tmp = sample[Fields.stats][DEFAULT_PREFIX + issue]
+                if True in tmp:
+                    return False
+            return True
             
         # keep_bools = np.array([
         #     self.min_size <= image_size <= self.max_size

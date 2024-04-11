@@ -5,7 +5,8 @@ from datasets import Dataset
 from loguru import logger
 from data_juicer.utils.constant import DEFAULT_PREFIX, Fields
 import json
-
+from multiprocessing import Pool
+import jsonlines
 
 class Tracer:
     """
@@ -73,12 +74,15 @@ class Tracer:
 
         # export the tracer results.
         res_name = f'mapper-{op_name}.jsonl'
-        dif_df = pd.DataFrame(dif_dict)
-        dif_df.to_json(os.path.join(self.work_dir, res_name),
-                       orient='records',
-                       lines=True,
-                       force_ascii=False)
-
+        # dif_df = pd.DataFrame(dif_dict)
+        # dif_df.to_json(os.path.join(self.work_dir, res_name),
+        #                orient='records',
+        #                lines=True,
+        #                force_ascii=False)
+        with jsonlines.open(os.path.join(self.work_dir, res_name), mode='w') as writer:
+            writer.write_all(dif_dict)
+            
+            
     def trace_batch_mapper(self, op_name: str, previous_ds: Dataset,
                            processed_ds: Dataset, text_key: str):
         """
@@ -113,11 +117,15 @@ class Tracer:
 
         # export the tracer results.
         res_name = f'mapper-{op_name}.jsonl'
-        dif_df = pd.DataFrame(aug_dict)
-        dif_df.to_json(os.path.join(self.work_dir, res_name),
-                       orient='records',
-                       lines=True,
-                       force_ascii=False)
+        # dif_df = pd.DataFrame(aug_dict)
+        # dif_df.to_json(os.path.join(self.work_dir, res_name),
+        #                orient='records',
+        #                lines=True,
+        #                force_ascii=False)
+        
+        
+        with jsonlines.open(os.path.join(self.work_dir, res_name), mode='w') as writer:
+            writer.write_all(aug_dict)
 
     def trace_filter(self, op_name: str, previous_ds: Dataset,
                      processed_ds: Dataset):
@@ -173,11 +181,14 @@ class Tracer:
 
         # export the tracer results.
         res_name = f'filter-{op_name}.jsonl'
-        filter_df = pd.DataFrame(filter_dict)
-        filter_df.to_json(os.path.join(self.work_dir, res_name),
-                          orient='records',
-                          lines=True,
-                          force_ascii=False)
+        # filter_df = pd.DataFrame(filter_dict)
+        # filter_df.to_json(os.path.join(self.work_dir, res_name),
+        #                   orient='records',
+        #                   lines=True,
+        #                   force_ascii=False)
+        
+        with jsonlines.open(os.path.join(self.work_dir, res_name), mode='w') as writer:
+            writer.write_all(filter_dict)
 
     def trace_deduplicator(self, op_name: str, dup_pairs: list):
         """
@@ -221,18 +232,21 @@ class Tracer:
 
         # export the tracer result.
         res_name = f'duplicate-{op_name}.jsonl'
-        dup_df = pd.DataFrame(dup_dict)
+        # dup_df = pd.DataFrame(dup_dict)
         # dup_df.to_json(os.path.join(self.work_dir, res_name),
         #                orient='records',
         #                lines=True,
         #                force_ascii=False)
+    
+        with jsonlines.open(os.path.join(self.work_dir, res_name), mode='w') as writer:
+            writer.write_all(dup_dict)
 
-        placeholder = 'N/A'
-        df_filled = dup_df.applymap(lambda x: placeholder if pd.isnull(x) else x)
-        with open(os.path.join(self.work_dir, res_name), 'w') as f:
-            for index, row in df_filled.iterrows():
-                json_line = {key: value for key, value in row.items() if value != placeholder}
-                f.write(json.dumps(json_line) + '\n') 
+        # placeholder = 'N/A'
+        # df_filled = dup_df.applymap(lambda x: placeholder if pd.isnull(x) else x)
+        # with open(os.path.join(self.work_dir, res_name), 'w') as f:
+        #     for index, row in df_filled.iterrows():
+        #         json_line = {key: value for key, value in row.items() if value != placeholder}
+        #         f.write(json.dumps(json_line) + '\n') 
         
         
     def trace_mycleanlab(self, op_name: str, previous_ds: Dataset,
@@ -294,16 +308,22 @@ class Tracer:
 
         # export the tracer results.
         res_name = f'filter-{op_name}.jsonl'
-        filter_df = pd.DataFrame(filter_dict)
-        filter_df.to_json(os.path.join(self.work_dir, res_name),
-                          orient='records',
-                          lines=True,
-                          force_ascii=False)
+        # filter_df = pd.DataFrame(filter_dict)
+        with jsonlines.open(os.path.join(self.work_dir, res_name), mode='w') as writer:
+            writer.write_all(filter_dict)
+        # filter_df.to_json(os.path.join(self.work_dir, res_name),
+        #                   orient='records',
+        #                   lines=True,
+        #                   force_ascii=False)
         
-        for issue in issues:
-            tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
-            if not tmp_df.empty:
-                tmp_df.to_json(os.path.join(self.work_dir, f'cleanvision-{issue}.jsonl'),
-                            orient='records',
-                            lines=True,
-                            force_ascii=False)
+        # for issue in issues:
+        #     stats_array = np.array([d['stats'] for d in filter_df])
+        #     tmp_df = [d for d in filter_df if any(stats_array[filter_df.index(d), filter_df[0].keys().index(DEFAULT_PREFIX + issue)])]
+        #     # tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+        #     if tmp_df:
+        #         # tmp_df.to_json(os.path.join(self.work_dir, f'cleanvision-{issue}.jsonl'),
+        #         #             orient='records',
+        #         #             lines=True,
+        #         #             force_ascii=False)
+        #         with jsonlines.open(os.path.join(self.work_dir, f'cleanvision-{issue}.jsonl', mode='w') as writer:
+        #             writer.write_all(filter_dict)

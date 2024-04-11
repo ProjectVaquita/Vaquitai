@@ -25,6 +25,7 @@ class DocumentDeduplicator(Deduplicator):
     def __init__(self,
                  lowercase: bool = False,
                  ignore_non_character: bool = False,
+                 keep_all: bool = False,
                  *args,
                  **kwargs):
         """
@@ -41,6 +42,7 @@ class DocumentDeduplicator(Deduplicator):
         self.remove_non_character_regex = re.compile(
             f'\s+|\d+|[{re.escape(string.punctuation)}]'  # noqa: W605
         ) if ignore_non_character else None
+        self.keep_all = keep_all
 
     def compute_hash(self, sample):
         """
@@ -92,18 +94,24 @@ class DocumentDeduplicator(Deduplicator):
             ][:show_num])
 
         def _filter_dup_helper(sample, hashes):
-            hash = sample[HashKeys.hash]
-            if show_num > 0 and hash in dup_hashes:
-                # tracer is open and not enough duplicate sample pairs
-                dup_pairs[hash].append(sample)
-            if hash in hashes:
-                return False
-            else:
-                hashes.add(hash)
+            if self.keep_all:
                 return True
+            else:
+                hash = sample[HashKeys.hash]
+                if show_num > 0 and hash in dup_hashes:
+                    # tracer is open and not enough duplicate sample pairs
+                    dup_pairs[hash].append(sample)
+                if hash in hashes:
+                    return False
+                else:
+                    hashes.add(hash)
+                    return True
 
         hashes = set()
-        dup_pairs = {hash_v: [] for hash_v in dup_hashes} if dup_hashes else {}
+        if self.keep_all:
+            dup_pairs = {}
+        else:
+            dup_pairs = {hash_v: [] for hash_v in dup_hashes} if dup_hashes else {}
         dataset = dataset.filter(
             _filter_dup_helper,
             fn_kwargs=dict(hashes=hashes),

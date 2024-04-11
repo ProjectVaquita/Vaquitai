@@ -31,7 +31,7 @@ class ImageDeduplicator(Deduplicator):
     of images between documents.
     """
 
-    def __init__(self, method: str = 'phash', *args, **kwargs):
+    def __init__(self, method: str = 'phash', keep_all: bool = False, *args, **kwargs):
         """
         Initialization method.
 
@@ -44,6 +44,7 @@ class ImageDeduplicator(Deduplicator):
             raise ValueError(f'Keep strategy [{method}] is not supported. '
                              f'Can only be one of {HASH_METHOD.keys()}.')
         self.hasher = HASH_METHOD[method]()
+        self.keep_all = keep_all
 
     def compute_hash(self, sample, context=False):
         # check if it's computed already
@@ -94,22 +95,28 @@ class ImageDeduplicator(Deduplicator):
             ][:show_num])
 
         def _filter_dup_helper(sample, hashes):
-            hash = sample[HashKeys.imagehash]
-            if not hash:
+            if self.keep_all:
                 return True
-            # if show_num > 0 and hash in dup_hashes \
-                    # and len(dup_pairs[hash]) < 2:
-            if show_num > 0 and hash in dup_hashes:
-                # tracer is open and not enough duplicate sample pairs
-                dup_pairs[hash].append(sample)
-            if hash in hashes:
-                return False
             else:
-                hashes.add(hash)
-                return True
+                hash = sample[HashKeys.imagehash]
+                if not hash:
+                    return True
+                # if show_num > 0 and hash in dup_hashes \
+                        # and len(dup_pairs[hash]) < 2:
+                if show_num > 0 and hash in dup_hashes:
+                    # tracer is open and not enough duplicate sample pairs
+                    dup_pairs[hash].append(sample)
+                if hash in hashes:
+                    return False
+                else:
+                    hashes.add(hash)
+                    return True
 
         hashes = set()
-        dup_pairs = {hash_v: [] for hash_v in dup_hashes} if dup_hashes else {}
+        if self.keep_all:
+            dup_pairs = {}
+        else:
+            dup_pairs = {hash_v: [] for hash_v in dup_hashes} if dup_hashes else {}
         dataset = dataset.filter(
             _filter_dup_helper,
             fn_kwargs=dict(hashes=hashes),
