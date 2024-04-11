@@ -16,6 +16,9 @@ import os
 from collections import defaultdict
 from data_juicer.utils.vis import plot_dups
 from data_juicer.utils.mm_utils import remove_special_tokens
+import numpy as np
+from data_juicer.utils.constant import Fields, DEFAULT_PREFIX
+
 
 # Constants
 IMAGE_KEY = "images"
@@ -40,6 +43,9 @@ ISSUE_DICT = {
     '低质量-图像大小': 'filter-image_shape_filter',
     '优质数据': 'demo-processed'
 }
+CLEANLAB_ISSUE = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
+                "is_low_information_issue", "is_light_issue", 
+                "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"],
 
 # Main function to write data
 def write():
@@ -63,6 +69,20 @@ def write():
     # Display pie chart
     display_pie_chart(stats)
     
+    cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
+    if os.path.exists(cleanlab_path):
+        filter_df = pd.read_json(cleanlab_path, lines=True)
+        for issue in CLEANLAB_ISSUE:
+            stats_array = np.array([d['stats'] for d in filter_df])
+            tmp_df = [d for d in filter_df if any(stats_array[filter_df.index(d), filter_df[0].keys().index(DEFAULT_PREFIX + issue)])]
+            tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+            if tmp_df:
+                tmp_df.to_json(os.path.join(tracer_path, f'cleanvision-{issue}.jsonl'),
+                            orient='records',
+                            lines=True,
+                            force_ascii=False)
+
+        
     # File paths
     file_paths = get_file_paths(tracer_path)
     
