@@ -18,6 +18,7 @@ from data_juicer.utils.vis import plot_dups
 from data_juicer.utils.mm_utils import remove_special_tokens
 import numpy as np
 from data_juicer.utils.constant import Fields, DEFAULT_PREFIX
+import random
 
 
 # Constants
@@ -45,7 +46,7 @@ ISSUE_DICT = {
 }
 CLEANLAB_ISSUE = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
                 "is_low_information_issue", "is_light_issue", 
-                "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"],
+                "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"]
 
 # Main function to write data
 def write():
@@ -73,14 +74,14 @@ def write():
     if os.path.exists(cleanlab_path):
         filter_df = pd.read_json(cleanlab_path, lines=True)
         for issue in CLEANLAB_ISSUE:
-            stats_array = np.array([d['stats'] for d in filter_df])
-            tmp_df = [d for d in filter_df if any(stats_array[filter_df.index(d), filter_df[0].keys().index(DEFAULT_PREFIX + issue)])]
-            tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
-            if tmp_df:
-                tmp_df.to_json(os.path.join(tracer_path, f'cleanvision-{issue}.jsonl'),
-                            orient='records',
-                            lines=True,
-                            force_ascii=False)
+            out_path = os.path.join(tracer_path, f'cleanvision-{issue}.jsonl')
+            if not os.path.exists(out_path):
+                tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+                if not tmp_df.empty:
+                    tmp_df.to_json(out_path,
+                                orient='records',
+                                lines=True,
+                                force_ascii=False)
 
         
     # File paths
@@ -106,8 +107,12 @@ def write():
             cat_df = "%s/demo-processed.jsonl" % project_path
         else:
             cat_df = problems_dict[ISSUE_DICT_T[category_issue]]
-        selected_issues = pd.read_json(cat_df, lines=True)
-        selected_rows = selected_issues.sample(n=amount)
+            
+        selected_issues = read_random_lines(cat_df, amount)
+        selected_rows = jsonl_to_dataframe(selected_issues)
+
+        # selected_issues = pd.read_json(cat_df, lines=True)
+        # selected_rows = selected_issues.sample(n=amount)
         
         cols = st.columns(images_per_col)
         if not category_issue.startswith('重复-'):
@@ -124,6 +129,21 @@ def write():
                 dups = [row[f"dup{_ + 1}"] for _ in range(dup_num)][:12]
                 display_image = plot_dups(oris, dups, dup_num)
                 cols[j].pyplot(display_image)
+
+
+def read_random_lines(filename, num_lines=3):
+    lines = []
+    with open(filename, 'r', encoding='utf-8') as file:
+        for line in file:
+            lines.append(line)
+    
+    return random.sample(lines, num_lines)
+
+
+def jsonl_to_dataframe(jsonl_lines):
+    data = [json.loads(line) for line in jsonl_lines]
+    return pd.DataFrame(data)
+
 
 # Display pie chart
 def display_pie_chart(stats):
