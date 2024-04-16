@@ -36,6 +36,7 @@ class ImageTextFeatureMapper(Mapper):
                  vertical_flip: bool = False,
                  any_or_all: str = 'any',
                  reduce_mode: str = 'avg',
+                 save_emb: bool = False,
                  *args,
                  **kwargs):
         """
@@ -75,6 +76,7 @@ class ImageTextFeatureMapper(Mapper):
         self.reduce_mode = reduce_mode
         self.horizontal_flip = horizontal_flip
         self.vertical_flip = vertical_flip
+        self.save_emb = save_emb
 
     def process(self, sample, rank=None, context=False):
         # check if it's computed already
@@ -126,8 +128,9 @@ class ImageTextFeatureMapper(Mapper):
 
                 outputs = model(**inputs)
                 chunk_logits = outputs.logits_per_text.detach().cpu() / 100.0
-                sample[Fields.stats][StatsKeys.image_embedding] = outputs.image_embeds.detach().cpu()
-                # sample[Fields.stats][StatsKeys.text_embedding] = outputs.text_embeds.detach().cpu()
+                if self.save_emb:
+                    sample[Fields.stats][StatsKeys.image_embedding] = outputs.image_embeds.detach().cpu()
+                    sample[Fields.stats][StatsKeys.text_embedding] = outputs.text_embeds.detach().cpu()
                 if self.reduce_mode == 'avg':
                     chunk_similarity = chunk_logits.mean()
                 elif self.reduce_mode == 'max':

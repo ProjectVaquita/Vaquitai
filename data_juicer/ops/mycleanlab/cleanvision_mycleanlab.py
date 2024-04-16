@@ -1,4 +1,4 @@
-from data_juicer.utils.constant import Fields, DEFAULT_PREFIX
+from data_juicer.utils.constant import Fields
 from datasets import Dataset, load_dataset, concatenate_datasets
 
 from ..base_op import OPERATORS, Mycleanlab
@@ -20,10 +20,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     """
 
     def __init__(self,
-                 issues: list = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
-                                "is_low_information_issue", "is_light_issue", 
-                                "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"], 
-                                # "is_exact_duplicates_issue", "is_near_duplicates_issue"],
+                 issues: dict = {"dark": {}, "blurry": {}, "low_information": {}, "light": {}, "grayscale": {}, "odd_aspect_ratio": {}, "odd_size": {}}, 
                  any_or_all: str = 'any',
                  keep_all: bool = False,
                  *args,
@@ -44,7 +41,7 @@ class CleanvisionMycleanlab(Mycleanlab):
         
         
     def save_results(self, sample, sample_index):
-        for issue in self.issues:
+        for issue in self.issues.keys():
             images_list = sample.get(self.image_key)
             for i in range(len(images_list)):
                 path_index = self.index_lookup.get(images_list[i])
@@ -52,10 +49,15 @@ class CleanvisionMycleanlab(Mycleanlab):
                     for p_ind in path_index:
                         p_index_split = [int(_) for _ in p_ind.split("-")]
                         if p_index_split[0] == sample_index:
-                            if sample.get(DEFAULT_PREFIX + issue, None) is None:
-                                sample[Fields.stats][DEFAULT_PREFIX + issue] = [False for _ in range(len(images_list))]
-                            sample[Fields.stats][DEFAULT_PREFIX + issue][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue).to_list()[0]
-
+                            issue_score = "%s_score" % issue
+                            issue_bool = "is_%s_issue" % issue
+                            if sample.get(issue, None) is None:
+                                if not self.keep_all:
+                                    sample[Fields.stats][issue_bool] = [False for _ in range(len(images_list))]
+                                sample[Fields.stats][issue_score] = [False for _ in range(len(images_list))]
+                            if not self.keep_all:
+                                sample[Fields.stats][issue_bool][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue_bool).to_list()[0]
+                            sample[Fields.stats][issue_score][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue_score).to_list()[0]
         return sample
     
     
@@ -71,7 +73,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     def pre_process(self, dataset, num_proc):
         image_paths = dataset[self.image_key]
         hf_dataset_lst, res_df_lst = [], []
-        chunk_size = 100000
+        chunk_size = 1000000
         for j, image_pathxs in enumerate([image_paths[i : i + chunk_size] for i in range(0, len(image_paths), chunk_size)]):
             def worker(_):
                 return [Image.open(x) for x in _] 
@@ -82,7 +84,7 @@ class CleanvisionMycleanlab(Mycleanlab):
             my_dict = {self.image_key: sum(image_keys, []), self.image_key + "_path": sum(dataset[self.image_key][j * chunk_size : (j + 1) * chunk_size], [])}
             tmp_dataset = Dataset.from_dict(my_dict)
             imagelab = Imagelab(hf_dataset=tmp_dataset, image_key=self.image_key)
-            imagelab.find_issues()
+            imagelab.find_issues(issue_types=self.issues, n_jobs=num_proc)
             hf_dataset_lst.append(tmp_dataset.remove_columns([self.image_key]))
             res_df_lst.append(imagelab.issues)
         self.hf_dataset = concatenate_datasets(hf_dataset_lst)
@@ -103,21 +105,9 @@ class CleanvisionMycleanlab(Mycleanlab):
         if self.keep_all:
             return True
         else:
-            for issue in self.issues:
-                tmp = sample[Fields.stats][DEFAULT_PREFIX + issue]
+            for issue in self.issues.keys():
+                tmp = sample[Fields.stats]["is_%s_issue" % issue]
                 if True in tmp:
                     return False
             return True
             
-        # keep_bools = np.array([
-        #     self.min_size <= image_size <= self.max_size
-        #     for image_size in image_sizes
-        # ])
-        # if len(keep_bools) <= 0:
-        #     return True
-
-        # # different strategies
-        # if self.any:
-        #     return keep_bools.any()
-        # else:
-        #     return keep_bools.all()
