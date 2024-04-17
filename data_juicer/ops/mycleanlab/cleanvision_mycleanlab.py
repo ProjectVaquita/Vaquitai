@@ -54,10 +54,12 @@ class CleanvisionMycleanlab(Mycleanlab):
                             if sample.get(issue, None) is None:
                                 if not self.keep_all:
                                     sample[Fields.stats][issue_bool] = [False for _ in range(len(images_list))]
-                                sample[Fields.stats][issue_score] = [False for _ in range(len(images_list))]
+                                else:
+                                    sample[Fields.stats][issue_score] = [False for _ in range(len(images_list))]
                             if not self.keep_all:
                                 sample[Fields.stats][issue_bool][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue_bool).to_list()[0]
-                            sample[Fields.stats][issue_score][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue_score).to_list()[0]
+                            else:
+                                sample[Fields.stats][issue_score][p_index_split[1]] = self.res_df.iloc[[p_index_split[2]]].get(issue_score).to_list()[0]
         return sample
     
     
@@ -73,7 +75,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     def pre_process(self, dataset, num_proc):
         image_paths = dataset[self.image_key]
         hf_dataset_lst, res_df_lst = [], []
-        chunk_size = 1000000
+        chunk_size = 100000
         for j, image_pathxs in enumerate([image_paths[i : i + chunk_size] for i in range(0, len(image_paths), chunk_size)]):
             def worker(_):
                 return [Image.open(x) for x in _] 
