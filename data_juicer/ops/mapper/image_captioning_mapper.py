@@ -4,9 +4,11 @@ import random
 import numpy as np
 from jsonargparse.typing import PositiveInt
 from loguru import logger
+import operator
+from functools import reduce
 
 from data_juicer.utils.availability_utils import AvailabilityChecking
-from data_juicer.utils.constant import HashKeys
+from data_juicer.utils.constant import HashKeys,Fields,StatsKeysConstant
 from data_juicer.utils.mm_utils import (SpecialTokens,
                                         insert_texts_after_placeholders,
                                         load_image, remove_non_special_tokens,
@@ -154,6 +156,7 @@ class ImageCaptioningMapper(Mapper):
         # and the original special tokens are kept in an order-preserving way.
 
         model, processor = get_model(self.model_key, rank=rank)
+        
 
         # do generation for each image chunk by chunk
         for chunk in ori_sample[self.text_key].split(SpecialTokens.eoc):
@@ -226,6 +229,9 @@ class ImageCaptioningMapper(Mapper):
                     new_texts=new_generated_text_all_images[i])
                 generated_samples[i][self.text_key] += \
                     f'{new_generated_text_per_chunk}{SpecialTokens.eoc}'
+                if StatsKeysConstant.image_caption not in generated_samples[i][Fields.stats]:
+                    generated_samples[i][Fields.stats][StatsKeysConstant.image_caption] = []
+                generated_samples[i][Fields.stats][StatsKeysConstant.image_caption].extend(new_generated_text_all_images[i])
 
             offset += img_count
 
@@ -294,10 +300,15 @@ class ImageCaptioningMapper(Mapper):
         samples_after_generation = []
         # do generation for each sample within the batch
         for ori_sample in reconstructed_samples:
-            if self.keep_original_sample:
-                samples_after_generation.append(ori_sample)
             generated_samples = self._process_single_sample(ori_sample,
                                                             rank=rank)
+            for sp in generated_samples:
+                if StatsKeysConstant.image_caption not in ori_sample[Fields.stats]:
+                    ori_sample[Fields.stats][StatsKeysConstant.image_caption] = []
+                ori_sample[Fields.stats][StatsKeysConstant.image_caption].extend(sp[Fields.stats][StatsKeysConstant.image_caption])
+
+            if self.keep_original_sample:
+                samples_after_generation.append(ori_sample)
             if len(generated_samples) != 0:
                 samples_after_generation.extend(generated_samples)
         # reconstruct samples from "list of dicts" to "dict of lists"
