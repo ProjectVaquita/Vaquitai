@@ -69,15 +69,9 @@ def main():
             }
         )
         st.title("About")
-        st.image("https://datacentric-1316957999.cos.ap-beijing.myqcloud.com/data-centric/app_image/home/qrcode.jpg")
         st.info(
         """
-        This web [app](http://datacentric.club/) is maintained by [vaquitai](https://github.com/ProjectVaquitai). You can follow us on community:
-            [GitHub](https://github.com/ProjectVaquitai/Vaquitai),
-            [小红书](https://www.xiaohongshu.com/user/profile/5cb921b0000000001102f005?xhsshare=CopyLink&appuid=63516e68000000001901e7dc&apptime=1709825164),
-            [公众号](https://mp.weixin.qq.com/s/8ZQnHgp07rvTGEluoKp-rw),
-            [知乎](https:///www.zhihu.com/people/VaquitaAI),
-        
+        This web [app](http://datacentric.club/) is maintained by [vaquitai](https://github.com/ProjectVaquitai).
         """
         )
         st.write(f'Welcome *{st.session_state["name"]}*')

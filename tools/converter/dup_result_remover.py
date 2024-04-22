@@ -62,7 +62,7 @@ def remove_entries_by_image_paths(original_file_path, corresponding_file_path, i
 
 
 if __name__ == "__main__":
-    root_path = "/mnt/share_disk/songyuhao/DCAI/processed_data"
+    root_path = ""
     base_op = "%s/demo-1080w-cleanvision" % root_path
     imagedup_file = "%s/demo-1080w-imagedup/trace/duplicate-image_deduplicator.jsonl" % root_path
     docdup_file = "%s/demo-1080w-docdup/trace/duplicate-document_deduplicator.jsonl" % root_path
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     
     image_paths_to_remove = all_dup_image_paths + all_dup_doc_paths
-    output_root = "/mnt/share_disk/songyuhao/DCAI/processed_data/demo-1080w-rmdup"
+    output_root = ""
     remove_entries_by_image_paths(base_data_path, base_stats_path_list, image_paths_to_remove, output_root)
     
     

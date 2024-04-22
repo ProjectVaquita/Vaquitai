@@ -6,7 +6,7 @@ from multiprocessing.pool import ThreadPool
 
 
 orientation = "front_middle_camera"
-parquet_file_path = '/root/data-juicer/demos/data_gn/icu30_2d_3d_box_1001.parquet'
+parquet_file_path = '/'
 df = pd.read_parquet(parquet_file_path)
 usable_df = df[df["sensor_name"] == orientation]
 print(usable_df)

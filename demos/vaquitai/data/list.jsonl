@@ -1,3 +1,0 @@
-{"text": "haha", "images": ["cifar10_cl/blur1.jpg", "cifar10_cl/blur2.jpg"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/blur2.jpg", "cifar10_cl/low0.png", "cifar10_cl/low0.png"], "annotations": ["blur"]}
-{"text": "haha", "images": ["cifar10_cl/low0.png", "cifar10_cl/low1.png"], "annotations": ["low"]}

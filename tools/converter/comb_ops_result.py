@@ -3,7 +3,7 @@ from tqdm import tqdm
 from multiprocessing import Pool
 
 
-root_path = "/mnt/share_disk/songyuhao/DCAI/processed_data/demo-1080w-rmdup"
+root_path = ""
 base_file = "%s/demo-1080w-cleanvision_demo-processed_stats.jsonl" % root_path
 new_op_file_names = ["%s/demo-1080w-sim_demo-processed_stats.jsonl" % root_path, "%s/demo-1080w-text_demo-processed_stats.jsonl" % root_path]
 
