@@ -67,7 +67,7 @@ streamlit run appv.py --server.address 0.0.0.0 --server.port 80
 ### 运行
 首次运行会进行模型下载
 
-![数据处理执行流程](https://datacentric-1316957999.cos.ap-beijing.myqcloud.com/data-centric/app_image/home/process.jpg)
+![数据处理执行流程](https://datacentric-1316957999.cos.ap-beijing.myqcloud.com/data-centric/app_image/home/process2.jpg)
 
 ### 算子支持列表
 | 类型 |      OP      |             名称             |             参数示例             |                            参数说明                             |                          描述                          |
