@@ -27,6 +27,14 @@ pip install -v -e .[all]
 ## 快速上手
 
 ### 数据处理
+#### Terminal
+```shell
+# 命令行启动
+python tools/process_data.py --config=./configs/demo/vaquitai.yaml
+
+```
+
+#### WEBUI
 
 ```shell
 # 本地启动
@@ -58,7 +66,7 @@ streamlit run appv.py --server.address 0.0.0.0 --server.port 80
 
 ```json
 {
-"image": "./demos/vaquitai/data/cifar10_cl/cat_s_000081.png", 
+"images": ["./demos/vaquitai/data/cifar10_cl/cat_s_000081.png"], 
 "text": "Today is Sunday and it's a happy day!",
 "annotations": ["cat"]
 }
