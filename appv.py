@@ -71,7 +71,7 @@ def main():
         st.title("About")
         st.info(
         """
-        This web [app](http://datacentric.club/) is maintained by [vaquitai](https://github.com/ProjectVaquitai).
+        This web is maintained by [vaquitai](https://github.com/ProjectVaquitai).
         """
         )
         st.write(f'Welcome *{st.session_state["name"]}*')
