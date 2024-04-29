@@ -2,15 +2,15 @@
 
 # global parameters
 open_tracer: True
-project_name: 'demo-vaquitai'
+project_name: 'demo-backbone'
 # dataset_path: './demos/vaquitai/data/cifar10_mini.jsonl'  # path to your dataset directory or file
-dataset_path: '/mnt/share_disk/wangdaming/index_all.jsonl'  # path to your dataset directory or file
+dataset_path: '/mnt/share_disk/songyuhao/general_tos_10w.jsonl'  # path to your dataset directory or file
 np: 64  # number of subprocess to process your dataset
 
 image_key: 'images'
 trace_num: 100000000
 
-export_path: './outputs/demo-vaquitai/demo-processed.jsonl'
+export_path: './outputs/demo-backbone-opensource-10w/demo-processed.jsonl'
 keep_cleaning_stas_in_res_ds: False
 keep_hashes_in_res_ds: False
 
@@ -22,12 +22,12 @@ process:
   # - feature_reduce_generator:
   # - image_caption_generator:
 
-  - language_id_score_filter:
-      lang: 'en'
-      min_score: 0.0
-  - document_deduplicator:
-  - character_repetition_filter:
-  - word_repetition_filter:
+  # - language_id_score_filter:
+  #     lang: 'en'
+  #     min_score: 0.0
+  # - document_deduplicator:
+  # - character_repetition_filter:
+  # - word_repetition_filter:
   # - phrase_grounding_recall_filter:
   # - text_entity_dependency_filter:
   # - perplexity_filter:
@@ -35,8 +35,9 @@ process:
   # - image_aspect_ratio_filter:
   - image_deduplicator:
   - cleanvision_mycleanlab:
-  - image_text_similarity_filter:
-      min_score: 0.2
+  # - image_text_feature_mapper:
+  #     min_score: 0.2
+  #     save_img_emb: True
 
   # - image_text_matching_filter:
   # - image_watermark_filter:

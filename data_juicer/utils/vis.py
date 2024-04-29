@@ -49,14 +49,11 @@ def plot_dups(
     dup_texts = []
     for dup_each in dup_list:
         dup_txt = remove_special_tokens(dup_each[TEXT_KEY])
-    if dup_txt == "haha" and dup_each.get("type", None):
-        dup_texts.append(dup_each.get("type", None))
-    else:
-        dup_texts.append(dup_txt)
+        if dup_txt == "haha" and dup_each.get("type", None):
+            dup_texts.append(dup_each.get("type", None))
+        else:
+            dup_texts.append(dup_txt)
         
-        
-     = [_[TEXT_KEY][13:43] if len(_[TEXT_KEY]) < 30 else _[TEXT_KEY][13:43] + "..." for _ in dup_list]
-    
     ax.imshow(Image.open(orig_img))
     ax.set_title('Duplicated: %d\n%s\n%s' % (dup_amount, orig_img.split("/")[-1], orig_text), color='red', ha='center')
     ax.axis('off')

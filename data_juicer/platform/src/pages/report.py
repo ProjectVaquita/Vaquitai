@@ -57,7 +57,7 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "./outputs/demo-backbone"
+    project_path = "./outputs/demo-backbone-opensource-10w"
     tracer_path = f"{project_path}/trace"
     
     cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
@@ -153,7 +153,7 @@ def display_pie_chart(stats):
     tmp_stats = stats.copy()
     tmp_stats.pop("Clean")
     fig = px.pie(
-        names=tmp_stats.keys().map(),
+        names=tmp_stats.keys(),
         values=tmp_stats.values(),
         title='问题类别图',
     )
