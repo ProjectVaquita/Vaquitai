@@ -40,9 +40,22 @@ def plot_dups(
     )  # Always plot the original image in the middle of top row
     
     txt = remove_special_tokens(orig[TEXT_KEY])
-    orig_img, orig_text = orig[IMAGE_KEY][0], txt if len(txt) < 30 else txt[:30]
+    orig_img = orig[IMAGE_KEY][0]
+    if txt == "haha" and orig.get("type", None):
+        orig_text = orig.get("type", None)
+    else:
+        orig_text = txt if len(txt) < 30 else txt[:30]
     dup_imgs = sum([_[IMAGE_KEY] for _ in dup_list], [])
-    dup_texts = [_[TEXT_KEY][13:43] if len(_[TEXT_KEY]) < 30 else _[TEXT_KEY][13:43] + "..." for _ in dup_list]
+    dup_texts = []
+    for dup_each in dup_list:
+        dup_txt = remove_special_tokens(dup_each[TEXT_KEY])
+    if dup_txt == "haha" and dup_each.get("type", None):
+        dup_texts.append(dup_each.get("type", None))
+    else:
+        dup_texts.append(dup_txt)
+        
+        
+     = [_[TEXT_KEY][13:43] if len(_[TEXT_KEY]) < 30 else _[TEXT_KEY][13:43] + "..." for _ in dup_list]
     
     ax.imshow(Image.open(orig_img))
     ax.set_title('Duplicated: %d\n%s\n%s' % (dup_amount, orig_img.split("/")[-1], orig_text), color='red', ha='center')

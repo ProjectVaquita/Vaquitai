@@ -20,7 +20,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     """
 
     def __init__(self,
-                 issues: dict = {"dark": {}, "blurry": {}, "low_information": {}, "light": {}, "grayscale": {}, "odd_aspect_ratio": {}, "odd_size": {}}, 
+                 issues: dict = {"dark": {}, "blurry": {}, "low_information": {}, "light": {}, "grayscale": {}, "odd_aspect_ratio": {}}, 
                  any_or_all: str = 'any',
                  keep_all: bool = False,
                  *args,

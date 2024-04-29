@@ -40,11 +40,11 @@ ISSUE_DICT = {
     '低质量-图像极亮': 'cleanvision-is_light_issue',
     '低质量-图像比例1': 'filter-image_aspect_ratio_filter',
     '低质量-图像比例2': 'cleanvision-is_odd_aspect_ratio_issue',
-    '低质量-图像大小': 'cleanvision-is_odd_size_issue',
-    '低质量-图像大小': 'filter-image_shape_filter',
+    # '低质量-图像大小': 'cleanvision-is_odd_size_issue',
+    # '低质量-图像大小2': 'filter-image_shape_filter',
     '优质数据': 'demo-processed'
 }
-CLEANLAB_ISSUE = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
+CLEANLAB_ISSUE = ["is_odd_aspect_ratio_issue", 
                 "is_low_information_issue", "is_light_issue", 
                 "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"]
 
@@ -57,18 +57,8 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "./outputs/demo-vaquitai"
+    project_path = "./outputs/demo-backbone"
     tracer_path = f"{project_path}/trace"
-    
-    # Load and calculate data
-    stats = calculate_statistics(project_path)
-    total_problems = sum(stats.values())
-
-    # Display speedometer chart
-    display_speedometer_chart(stats)
-    
-    # Display pie chart
-    display_pie_chart(stats)
     
     cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
     if os.path.exists(cleanlab_path):
@@ -82,7 +72,16 @@ def write():
                                 orient='records',
                                 lines=True,
                                 force_ascii=False)
+    
+    # Load and calculate data
+    stats = calculate_statistics(project_path)
+    total_problems = sum(stats.values())
 
+    # Display speedometer chart
+    display_speedometer_chart(stats)
+    
+    # Display pie chart
+    display_pie_chart(stats)
         
     # File paths
     file_paths = get_file_paths(tracer_path)
@@ -119,7 +118,10 @@ def write():
             for j, (index, row) in enumerate(selected_rows.iterrows()):
                 images = row[IMAGE_KEY]
                 text = remove_special_tokens(row[TEXT_KEY])
-                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len(text) < 30 else text[:30]
+                if text == "haha" and row.get("type", None):
+                    caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % row.get("type", None)
+                else:
+                    caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len(text) < 30 else text[:30]
                 cols[j].markdown(caption, unsafe_allow_html=True)
                 cols[j].image(images, use_column_width=True)
         else:
@@ -151,7 +153,7 @@ def display_pie_chart(stats):
     tmp_stats = stats.copy()
     tmp_stats.pop("Clean")
     fig = px.pie(
-        names=tmp_stats.keys(),
+        names=tmp_stats.keys().map(),
         values=tmp_stats.values(),
         title='问题类别图',
     )
@@ -180,7 +182,7 @@ def display_speedometer_chart(stats):
         mode="gauge+number",
         value=score,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': "数据集得分", 'font': {'size': 48}},
+        title={'text': "数据集数据点得分", 'font': {'size': 48}},
         gauge={
             'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "dodgerblue"},
             'bar': {'color': "dodgerblue"},
@@ -258,7 +260,7 @@ def calculate_statistics(project_path):
         typ = file_p.split('-')[0]
         problem = file_p.split('-')[-1].split(".")[0]
         
-        if typ == "cleanvision":
+        if problem == "cleanvision_mycleanlab":
             continue
         elif typ == "duplicate":
             stats_dict[problem] = get_total_dup_nums(file_path)
@@ -268,6 +270,7 @@ def calculate_statistics(project_path):
         problems_dict[file_path] = problem
         
     stats_dict["Clean"] = get_total_line_count(output_path)
+    print(stats_dict)
 
     return stats_dict 
 
