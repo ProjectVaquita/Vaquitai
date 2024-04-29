@@ -74,7 +74,7 @@ class ImageFeatureExtractGenerator(Generator):
 
         return sample
 
-    def process(self, dataset):
+    def process(self, dataset, num_proc):
         """
         For doc-level, dataset --> dataset.
 
@@ -85,6 +85,7 @@ class ImageFeatureExtractGenerator(Generator):
         """
         # no need to deduplicate because too few samples
         dataset = dataset.map(self.compute_embedding,
+                              num_proc=num_proc,
                               desc= 'image_feature_extract_process')
 
         return dataset
