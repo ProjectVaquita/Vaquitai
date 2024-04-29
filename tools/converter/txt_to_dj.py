@@ -8,24 +8,24 @@ def convert_to_jsonl(dataset_names, dataset_counts, image_paths, output_file):
         for name, count in zip(dataset_names, dataset_counts):
             count_end = count_start + count
             for path in tqdm(image_paths[count_start:count_end], desc="Converting " + name, unit="image"):
-                json_obj = {"images": [path.strip()], "text": "haha", "type": name}
+                json_obj = {"images": [path.strip()], "text": "<__dj__image> haha <|__dj__eoc|>", "type": name}
                 writer.write(json_obj)
             count_start = count_end
 
 # Dataset names and counts
 dataset_names = ["kitti_data", "nuscenes", "waymo", "CC3M", "COCO2014", "FilteredFlickr-30k", 
-                 "GQA", "Hateful-Meme", "OCR-VQA", "TextCaps", "VisualGenome", "VizWiz"]
+                 "GQA", "Hateful-Meme", "OCR-VQA", "TextCaps", "VisualGenome", "VizWiz", "Haomo"]
 dataset_counts = [47937, 204894, 151805, 527723, 164062, 31783, 
-                  148854, 10000, 206671, 25119, 108079, 39703]
+                  148854, 10000, 206671, 25119, 108079, 39704, 3954583]
 
 # Read image paths from the input file
-input_file = "/root/dataset/general_tos.txt"
+input_file = "/root/dataset/general_tos_haomo395w.txt"
 
 with open(input_file, 'r') as f_in:
     image_paths = f_in.readlines()
 
 # Output JSONL file
-output_file = "datasets.jsonl"
+output_file = "/root/dataset/general_tos_haomo395w.jsonl"
 
 # Convert to JSONL format and save to output file
 convert_to_jsonl(dataset_names, dataset_counts, image_paths, output_file)

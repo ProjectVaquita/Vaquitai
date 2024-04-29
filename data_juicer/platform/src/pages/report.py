@@ -76,7 +76,7 @@ def write():
         for issue in CLEANLAB_ISSUE:
             out_path = os.path.join(tracer_path, f'cleanvision-{issue}.jsonl')
             if not os.path.exists(out_path):
-                tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+                tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[issue].apply(lambda x: True in x)]
                 if not tmp_df.empty:
                     tmp_df.to_json(out_path,
                                 orient='records',
