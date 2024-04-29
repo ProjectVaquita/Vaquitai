@@ -57,7 +57,7 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "./outputs/demo-backbone-opensource-10w"
+    project_path = "./outputs/demo-backbone-haomo-10w"
     tracer_path = f"{project_path}/trace"
     
     cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
@@ -74,14 +74,13 @@ def write():
                                 force_ascii=False)
     
     # Load and calculate data
-    stats = calculate_statistics(project_path)
-    total_problems = sum(stats.values())
+    stats_prob, stats_total = calculate_statistics(project_path)
 
     # Display speedometer chart
-    display_speedometer_chart(stats)
+    display_speedometer_chart(stats_total)
     
     # Display pie chart
-    display_pie_chart(stats)
+    display_pie_chart(stats_prob)
         
     # File paths
     file_paths = get_file_paths(tracer_path)
@@ -254,23 +253,28 @@ def calculate_statistics(project_path):
 
     file_paths = get_file_paths(tracer_path)
     
-    problems_dict, stats_dict = {}, defaultdict(int)
+    problems_dict, stats_dict_prob, stats_dict_total = {}, defaultdict(int), defaultdict(int)
     for file_path in file_paths:
         file_p = file_path.split('/')[-1].split('.')[0]
         typ = file_p.split('-')[0]
         problem = file_p.split('-')[-1].split(".")[0]
         
         if problem == "cleanvision_mycleanlab":
-            continue
+            stats_dict_total[problem] = get_total_line_count(file_path)
         elif typ == "duplicate":
-            stats_dict[problem] = get_total_dup_nums(file_path)
+            stats_dict_prob[problem] = get_total_dup_nums(file_path)
+            stats_dict_total[problem] = get_total_dup_nums(file_path)
+        elif typ == "filter" and problem.startswith("is"):
+            stats_dict_total[problem] = get_total_line_count(file_path)
         else:
-            stats_dict[problem] = get_total_line_count(file_path)
+            stats_dict_prob[problem] = get_total_line_count(file_path)
         
         problems_dict[file_path] = problem
         
-    stats_dict["Clean"] = get_total_line_count(output_path)
-    print(stats_dict)
+    stats_dict_prob["Clean"] = get_total_line_count(output_path)
+    stats_dict_total["Clean"] = get_total_line_count(output_path)
+    print(stats_dict_prob)
+    print(stats_dict_total)
 
-    return stats_dict 
+    return stats_dict_prob, stats_dict_total
 
