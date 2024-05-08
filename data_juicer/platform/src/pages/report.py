@@ -40,11 +40,11 @@ ISSUE_DICT = {
     '低质量-图像极亮': 'cleanvision-is_light_issue',
     '低质量-图像比例1': 'filter-image_aspect_ratio_filter',
     '低质量-图像比例2': 'cleanvision-is_odd_aspect_ratio_issue',
-    '低质量-图像大小': 'cleanvision-is_odd_size_issue',
-    '低质量-图像大小': 'filter-image_shape_filter',
+    # '低质量-图像大小': 'cleanvision-is_odd_size_issue',
+    # '低质量-图像大小2': 'filter-image_shape_filter',
     '优质数据': 'demo-processed'
 }
-CLEANLAB_ISSUE = ["is_odd_size_issue", "is_odd_aspect_ratio_issue", 
+CLEANLAB_ISSUE = ["is_odd_aspect_ratio_issue", 
                 "is_low_information_issue", "is_light_issue", 
                 "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"]
 
@@ -57,18 +57,8 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "./outputs/demo-vaquitai"
+    project_path = "./outputs/demo-backbone-opensource"
     tracer_path = f"{project_path}/trace"
-    
-    # Load and calculate data
-    stats = calculate_statistics(project_path)
-    total_problems = sum(stats.values())
-
-    # Display speedometer chart
-    display_speedometer_chart(stats)
-    
-    # Display pie chart
-    display_pie_chart(stats)
     
     cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
     if os.path.exists(cleanlab_path):
@@ -76,13 +66,21 @@ def write():
         for issue in CLEANLAB_ISSUE:
             out_path = os.path.join(tracer_path, f'cleanvision-{issue}.jsonl')
             if not os.path.exists(out_path):
-                tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[DEFAULT_PREFIX + issue].apply(lambda x: True in x)]
+                tmp_df = filter_df[pd.DataFrame(filter_df[Fields.stats].tolist())[issue].apply(lambda x: True in x)]
                 if not tmp_df.empty:
                     tmp_df.to_json(out_path,
                                 orient='records',
                                 lines=True,
                                 force_ascii=False)
+    
+    # Load and calculate data
+    stats_prob, stats_total = calculate_statistics(project_path)
 
+    # Display speedometer chart
+    display_speedometer_chart(stats_total)
+    
+    # Display pie chart
+    display_pie_chart(stats_prob)
         
     # File paths
     file_paths = get_file_paths(tracer_path)
@@ -119,7 +117,10 @@ def write():
             for j, (index, row) in enumerate(selected_rows.iterrows()):
                 images = row[IMAGE_KEY]
                 text = remove_special_tokens(row[TEXT_KEY])
-                caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len(text) < 30 else text[:30]
+                if text == "haha" and row.get("type", None):
+                    caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % row.get("type", None)
+                else:
+                    caption = '<p style="font-family:sans-serif; font-size: 24px;">%s</p>' % text if len(text) < 30 else text[:30]
                 cols[j].markdown(caption, unsafe_allow_html=True)
                 cols[j].image(images, use_column_width=True)
         else:
@@ -180,7 +181,7 @@ def display_speedometer_chart(stats):
         mode="gauge+number",
         value=score,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': "数据集得分", 'font': {'size': 48}},
+        title={'text': "数据集数据点得分", 'font': {'size': 48}},
         gauge={
             'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "dodgerblue"},
             'bar': {'color': "dodgerblue"},
@@ -252,22 +253,28 @@ def calculate_statistics(project_path):
 
     file_paths = get_file_paths(tracer_path)
     
-    problems_dict, stats_dict = {}, defaultdict(int)
+    problems_dict, stats_dict_prob, stats_dict_total = {}, defaultdict(int), defaultdict(int)
     for file_path in file_paths:
         file_p = file_path.split('/')[-1].split('.')[0]
         typ = file_p.split('-')[0]
         problem = file_p.split('-')[-1].split(".")[0]
         
-        if typ == "cleanvision":
-            continue
+        if problem == "cleanvision_mycleanlab":
+            stats_dict_total[problem] = get_total_line_count(file_path)
         elif typ == "duplicate":
-            stats_dict[problem] = get_total_dup_nums(file_path)
+            stats_dict_prob[problem] = get_total_dup_nums(file_path)
+            stats_dict_total[problem] = get_total_dup_nums(file_path)
+        elif typ == "filter" and problem.startswith("is"):
+            stats_dict_total[problem] = get_total_line_count(file_path)
         else:
-            stats_dict[problem] = get_total_line_count(file_path)
+            stats_dict_prob[problem] = get_total_line_count(file_path)
         
         problems_dict[file_path] = problem
         
-    stats_dict["Clean"] = get_total_line_count(output_path)
+    stats_dict_prob["Clean"] = get_total_line_count(output_path)
+    stats_dict_total["Clean"] = get_total_line_count(output_path)
+    print(stats_dict_prob)
+    print(stats_dict_total)
 
-    return stats_dict 
+    return stats_dict_prob, stats_dict_total
 

@@ -96,15 +96,15 @@ class ImageCaptionGenerator(Generator):
             if image.size[0] < 2 or image.size[1] < 2:
                 image = image.resize((224,224))
             inputs = self.img_processor(images=image, return_tensors="pt").to(self.device)
-            outputs = self.model.generate(**inputs)
+            outputs = self.model.generate(**inputs, max_length=60)
             image_caption_text = self.img_processor.decode(outputs[0], skip_special_tokens=True)
             sample[Fields.stats][StatsKeys.image_caption].append(image_caption_text)
 
         return sample
 
-    def process(self, dataset):
-        # there is no image in this sample
+    def process(self, dataset, num_proc):  
         dataset = dataset.map(self.caption,
-                              desc= 'image_caption_process')
+                            num_proc=num_proc,
+                            desc=OP_NAME + '_process')
 
         return dataset

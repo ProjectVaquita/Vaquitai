@@ -2,42 +2,46 @@
 
 # global parameters
 open_tracer: True
-project_name: 'hflip'
+project_name: 'demo-vaquitai-pa2'
 # dataset_path: './demos/vaquitai/data/cifar10_mini.jsonl'  # path to your dataset directory or file
-dataset_path: './Vaquitai/demos/vaquitai/data/cifar10_mini.jsonl'  # path to your dataset directory or file
+dataset_path: ''  # path to your dataset directory or file
 np: 64  # number of subprocess to process your dataset
 
 image_key: 'images'
 trace_num: 100000000
 
-export_path: '/mnt/share_disk/LIV/datacomp/processed_data/880w_1088w_dedup_processed/hflip/demo-processed.jsonl'
+export_path: './outputs/demo-vaquitai-pa2/demo-processed.jsonl'
 keep_cleaning_stas_in_res_ds: False
 keep_hashes_in_res_ds: False
 
 # process schedule
 # a list of several process operators with their arguments
 process:
-#   - image_validation_filter:
+#   - image_validation_filte  r:
   # - image_text_feature_mapper:
   # - feature_reduce_generator:
   # - image_caption_generator:
 
-  # - language_id_score_filter:
-  #     lang: 'en'
-  #     min_score: 0.0
-  # - document_deduplicator:
-  # - character_repetition_filter:
-  # - word_repetition_filter:
-  # - phrase_grounding_recall_filter:
+#   - language_id_score_filter: 
+#       min_score: 0.0
+#   - document_deduplicator:
+#       keep_all: True
+#   - character_repetition_filter:
+#       min_ratio: 0.0
+#       max_ratio: 1.0
+#   - word_repetition_filter:
+#       min_ratio: 0.0
+#       max_ratio: 1.0
+  # # - phrase_grounding_recall_filter:
   # - text_entity_dependency_filter:
   # - perplexity_filter:
 #   - image_shape_filter:
   # - image_aspect_ratio_filter:
-  # - image_deduplicator:
-  # - cleanvision_mycleanlab:
-  - image_text_feature_mapper:
-      horizontal_flip: True
-      save_img_emb: True
+#   - image_deduplicator:
+#       keep_all: True
+  - cleanvision_mycleanlab:
+      keep_all: True
+#   - image_text_feature_mapper:
 
   # - image_text_matching_filter:
   # - image_watermark_filter:

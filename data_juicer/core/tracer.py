@@ -262,7 +262,7 @@ class Tracer:
         :return:
         """
         
-        issues = ["is_odd_size_issue","is_odd_aspect_ratio_issue", 
+        issues = ["is_odd_aspect_ratio_issue", 
                   "is_low_information_issue", "is_light_issue", 
                   "is_grayscale_issue", "is_dark_issue", "is_blurry_issue"]
         

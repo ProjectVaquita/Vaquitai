@@ -20,7 +20,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     """
 
     def __init__(self,
-                 issues: dict = {"dark": {}, "blurry": {}, "low_information": {}, "light": {}, "grayscale": {}, "odd_aspect_ratio": {}, "odd_size": {}}, 
+                 issues: dict = {"dark": {}, "blurry": {}, "low_information": {}, "light": {}, "grayscale": {}, "odd_aspect_ratio": {}}, 
                  any_or_all: str = 'any',
                  keep_all: bool = False,
                  *args,
@@ -75,7 +75,7 @@ class CleanvisionMycleanlab(Mycleanlab):
     def pre_process(self, dataset, num_proc):
         image_paths = dataset[self.image_key]
         hf_dataset_lst, res_df_lst = [], []
-        chunk_size = 100000
+        chunk_size = 50000
         for j, image_pathxs in enumerate([image_paths[i : i + chunk_size] for i in range(0, len(image_paths), chunk_size)]):
             def worker(_):
                 return [Image.open(x) for x in _] 

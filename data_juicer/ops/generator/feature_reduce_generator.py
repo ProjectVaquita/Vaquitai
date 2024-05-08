@@ -32,7 +32,7 @@ class FeatureReduceGenerator(Generator):
         # Adjust 'n_jobs' to match your system's CPU cores
         self.model = UMAP(n_neighbors=15, n_components=2, metric='cosine', n_jobs=-1)
 
-    def process(self, dataset):
+    def process(self, dataset, num_proc):
         """
         Process the dataset to reduce the dimensionality of image embeddings.
         """
@@ -55,5 +55,5 @@ class FeatureReduceGenerator(Generator):
             return sample
 
         # Map the function across the dataset, adjust 'num_proc' as per your system's capabilities
-        dataset = dataset.map(save_emb2d, desc='feature_reduce_process', num_proc=8)
+        dataset = dataset.map(save_emb2d, desc='feature_reduce_process', num_proc=num_proc)
         return dataset

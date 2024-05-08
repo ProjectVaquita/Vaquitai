@@ -276,7 +276,7 @@ class Executor:
                 elif isinstance(op, Generator):   
                     if self.cfg.use_checkpoint:
                         prev = dataset
-                    tmp = op.process(dataset)
+                    tmp = op.process(dataset, num_proc=self.cfg.np)
                 else:
                     raise NotImplementedError
                 dataset = tmp
