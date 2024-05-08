@@ -2,15 +2,15 @@
 
 # global parameters
 open_tracer: True
-project_name: 'demo-backbone'
+project_name: 'hflip'
 # dataset_path: './demos/vaquitai/data/cifar10_mini.jsonl'  # path to your dataset directory or file
-dataset_path: '/mnt/share_disk/songyuhao/general_tos_10w.jsonl'  # path to your dataset directory or file
+dataset_path: '/mnt/share_disk/LIV/datacomp/processed_data/880w_1088w_dedup_processed/v0.1/demo-processed.jsonl'  # path to your dataset directory or file
 np: 64  # number of subprocess to process your dataset
 
 image_key: 'images'
 trace_num: 100000000
 
-export_path: './outputs/demo-backbone-opensource-10w/demo-processed.jsonl'
+export_path: '/mnt/share_disk/LIV/datacomp/processed_data/880w_1088w_dedup_processed/hflip/demo-processed.jsonl'
 keep_cleaning_stas_in_res_ds: False
 keep_hashes_in_res_ds: False
 
@@ -33,11 +33,11 @@ process:
   # - perplexity_filter:
 #   - image_shape_filter:
   # - image_aspect_ratio_filter:
-  - image_deduplicator:
-  - cleanvision_mycleanlab:
-  # - image_text_feature_mapper:
-  #     min_score: 0.2
-  #     save_img_emb: True
+  # - image_deduplicator:
+  # - cleanvision_mycleanlab:
+  - image_text_feature_mapper:
+      horizontal_flip: True
+      save_img_emb: True
 
   # - image_text_matching_filter:
   # - image_watermark_filter:

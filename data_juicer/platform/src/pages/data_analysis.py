@@ -25,7 +25,7 @@ from pandas import json_normalize
 
 
 CAPTION_KEY = "text"
-ROOT_DIR = "./outputs/demo-vaquitai"
+ROOT_DIR = "./outputs/demo-backbone-comb-dist-10w"
 COLUMN_IMAGE_CAPTION = '.'.join([Fields.stats, StatsKeysConstant.image_caption])
 COLUMN_IMAGE_EMBEDDING = '.'.join([Fields.stats, StatsKeysConstant.image_embedding])
 COLUMN_IMAGE_EMBEDDING_2D = '.'.join([Fields.stats, StatsKeysConstant.image_embedding_2d])
@@ -55,16 +55,16 @@ def create_faiss_index(emb_list):
 
 
 def scatter_plot(df_dataset, x_col, y_col, color_col, hover_data, ):
-    color_list = [ 'red', 'green', 'blue', 'orange', 'purple', 'yellow']
-    category_list = list(set(df_dataset[color_col]))
-    color_discrete_map = {category_list[i]: color_list[i] for i in range(len(category_list))}
+    # color_list = [ 'red', 'green', 'blue', 'orange', 'purple', 'yellow']
+    # category_list = list(set(df_dataset[color_col]))
+    # color_discrete_map = {category_list[i]: color_list[i] for i in range(len(category_list))}
     fig = px.scatter(
         df_dataset,
         x=x_col,
         y=y_col,
         color=color_col,
-        hover_data=hover_data,
-        color_discrete_map=color_discrete_map,
+        hover_data=['text'],
+        # color_discrete_map=color_discrete_map,
         symbol=color_col,
         opacity = 0.6,
         width=800, 
@@ -226,7 +226,7 @@ def write():
             fig = scatter_plot(df_compare, 
                                x_col='emb2d_x', 
                                y_col='emb2d_y', 
-                               color_col='color',
+                               color_col='data_source',
                                hover_data='text')
             st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 

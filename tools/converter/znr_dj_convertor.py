@@ -8,7 +8,7 @@ import jsonlines
 from datetime import datetime
 
 orientation = "lidar_top_32_scan"
-csv_file_path = '/mnt/share_disk/LIV/data_centric/2024-02-23T05-20_export.csv'
+csv_file_path = ''
 # df = pd.read_parquet(parquet_file_path)
 df = pd.read_csv(csv_file_path)
 usable_df = df[df["sensor_name"] == orientation]

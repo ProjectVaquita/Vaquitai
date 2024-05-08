@@ -7,7 +7,7 @@ import random
 import jsonlines
 from datetime import datetime
 
-data_path = "/mnt/share_disk/zhaolei/data/BDD100K/bdd100k/images/100k/val"
+data_path = ""
 result_path = "./demos/data_bdd/bdd.jsonl"
 
 def get_python_files(data_path):

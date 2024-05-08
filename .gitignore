@@ -17,3 +17,5 @@ wandb/
 __pycache__
 
 .vscode/
+
+nohup.out

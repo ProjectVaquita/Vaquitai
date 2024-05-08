@@ -12,8 +12,8 @@ data_types = ["train", "val"]
 result_path = "./demos/data_bdd/bdd_anno.jsonl"
 
 def process(data_type):
-    data_path = "/mnt/share_disk/zhaolei/data/BDD100K/bdd100k/images/100k/%s" % data_type
-    anno_path = "/mnt/share_disk/zhaolei/data/BDD100K/bdd100k/images/100k/anno/bdd100k_labels_images_%s.json" % data_type 
+    data_path = "" % data_type
+    anno_path = "" % data_type 
     def get_python_files(data_path):
         python_files_spec = [file for file in os.listdir(data_path)]
         # python_files_abs = [os.path.join(data_path, file) for file in python_files_spec]

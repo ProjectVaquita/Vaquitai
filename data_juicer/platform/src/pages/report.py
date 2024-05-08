@@ -57,7 +57,7 @@ def write():
     st.title('数据集报告')
     
     # Paths
-    project_path = "./outputs/demo-backbone-haomo-10w"
+    project_path = "./outputs/demo-backbone-opensource"
     tracer_path = f"{project_path}/trace"
     
     cleanlab_path = "%s/filter-cleanvision_mycleanlab.jsonl" % tracer_path
